@@ -7,33 +7,46 @@ import java.util.Arrays;
  */
 public class MoveZeros {
     public static void main(String[] args) {
-        int[] arr = {4,2,4,0,0,3,0,5,1,0};
+        int[] arr = {4, 2, 4, 0, 0, 3, 0, 5, 1, 0};
         moveZeroes(arr);
     }
 
-    public static void moveZeroes(int[] nums) {
-        int len = nums.length;
-        if(len ==1){
+    public static void moveZeroes(int[] arr) {
+        int len = arr.length;
+        if (len < 2) {
             return;
-        }else {
-            int p1 = 0;
-            int p2 = 1;
-            while(p1 < len && p2 < len){
-                if(nums[p1] == 0 && nums[p2] != 0){
-                    int temp = nums[p1];
-                    nums[p1] = nums[p2];
-                    nums[p2] = temp;
+        } else {
+            int p1 = 0, p2 = 1;
+            while (p2 < len) {
+                if (arr[p1] == 0 && arr[p2] != 0) {
+                    int temp = arr[p1];
+                    arr[p1] = arr[p2];
+                    arr[p2] = temp;
                     p1++;
                     p2++;
-                }
-                if( p1< len && nums[p1] != 0){
+                } else if (arr[p2] == 0) {
+                    p2++;
+                } else {
                     p1++;
                 }
-                if(p2<len && nums[p2] != 0){
-                    p2++;
+                System.out.println(p1+ " "+ p2);
+            }
+        }
+        System.out.println(Arrays.toString(arr));
+    }
+
+    public static void moveZeroesLinear(int[] arr) {
+        int len = arr.length;
+        for (int i = 0; i < len; i++) {
+            if (arr[i] == 0) {
+                for (int j = i + 1; j < len; j++) {
+                    if (arr[j] > 0) {
+                        arr[i] = arr[j];
+                        arr[j] = 0;
+                    }
                 }
             }
         }
-        System.out.println(Arrays.toString(nums));
+        System.out.println(Arrays.toString(arr));
     }
 }
