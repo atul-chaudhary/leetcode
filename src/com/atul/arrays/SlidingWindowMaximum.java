@@ -1,24 +1,35 @@
 package com.atul.arrays;
 
-import com.atul.strings.Interf;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.Predicate;
 
 public class SlidingWindowMaximum {
     public static void main(String[] args) {
         int[] arr = {1,3,-1,-3,5,3,6,7};
-
-        Predicate<Integer> predicate = e-> e%2==0;
-        maxSlidingWindow(arr, 3);
+        int result = maxSlidingWindow(arr, 3);
+        System.out.println(result);
     }
 
-    public static int[] maxSlidingWindow(int[] nums, int k) {
-        for(int i=0;i< nums.length;i=i+k-1){
-            for (int j = i; j < i+k; j++) {
-                System.out.print(nums[j]+ " ");
+    public static int maxSlidingWindow(int[] nums, int k) {
+        int l = nums.length - k +1;
+        int[] arr = new int[l];
+        int count = 0;
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < nums.length; i++) {
+            if(nums[i] > max){
+                max = nums[i];
+                count++;
             }
-            System.out.println();
+
+            if(count > k){
+                count  =0;
+                max = Integer.MIN_VALUE;
+            }
+
+            arr[i] = max;
         }
-        return null;
+        System.out.println(Arrays.toString(arr));
+        return 0;
     }
 }

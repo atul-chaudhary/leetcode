@@ -1,36 +1,13 @@
 package com.atul.tree;
 
-import com.atul.strings.Interf;
-import com.atul.strings.string1;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-interface Interf11{
-    public  static void main(String[] args){
-        System.out.println("main method");
-    }
-}
-
-public class InorderTraversal extends string1 implements Interf {
+public class InorderTraversal {
 
     public static void main(String[] args) {
-        InorderTraversal inorderTraversal = new InorderTraversal();
-        inorderTraversal.m1();
-        //inorderTraversal.
-        char[] arr = {'h', 'e', 'l', 'l', 'o'};
-        inorderTraversal.reverseString(arr);
-        //inorderTraversal.mymethod();
-    }
-
-
-    void meee(){
-        System.out.println("mdwsd w");
-    }
-
-    @Override
-    public void m2() {
 
     }
 }
