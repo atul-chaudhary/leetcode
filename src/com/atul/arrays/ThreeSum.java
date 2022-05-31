@@ -25,6 +25,7 @@ public class ThreeSum {
                 }
             }
         }
-        return new ArrayList<List<Integer>>(new LinkedHashSet<List<Integer>>(list));
+        System.out.println(list);
+        return new ArrayList<>(new LinkedHashSet<>(list));
     }
 }
