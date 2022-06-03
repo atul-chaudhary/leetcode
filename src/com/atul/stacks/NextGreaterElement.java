@@ -11,10 +11,51 @@ public class NextGreaterElement {
 //        int[] arr2 = {1,3,4,2};
 //        System.out.println(nextGreaterElement(arr1, arr2));
 
-        int[] arr = {89,62,70,58,47,47,46,76,100,70};
-        System.out.println(Arrays.toString(dailyTemperatures(arr)));
+        //int[] arr = {89,62,70,58,47,47,46,76,100,70};
+        //System.out.println(Arrays.toString(dailyTemperatures(arr)));
+
+        //int[] arr = {4, 5, 2, 25};
+        int[] arr = {2,10,12,11};
+        System.out.println(Arrays.toString(ngeCircular(arr)));
+        //System.out.println(Arrays.toString(nextGeNew(arr)));
+
     }
 
+    public static int[] ngeCircular(int[] arr){
+        int[] result = new int[arr.length];
+        int n = arr.length;
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 2*n-1; i >=0; i--) {
+            while(!stack.isEmpty() && stack.peek() <= arr[i%n]) stack.pop();
+            if(i<n){
+                if (stack.isEmpty()){
+                    result[i] = -1;
+                }else{
+                    result[i] = stack.peek();
+                }
+            }
+            stack.push(arr[i%n]);
+        }
+        return result;
+    }
+
+    public static int[] nextGeNew(int[] arr){
+        int[] result = new int[arr.length];
+        Stack<Integer> stack = new Stack<>();
+        for (int i = arr.length-1; i >=0; i--) {
+            while(!stack.isEmpty() && stack.peek() <= arr[i]){
+                stack.pop();
+            }
+
+            if(stack.isEmpty()){
+                result[i] = -1;
+            }else{
+                result[i] = stack.peek();
+            }
+            stack.push(arr[i]);
+        }
+        return result;
+    }
     public static int[] dailyTemperatures(int[] arr) {
         class Node{
             int val;

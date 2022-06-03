@@ -1,23 +1,52 @@
 package com.atul.stacks;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
 
-public class LargestRectangleInHistogram {
-
+public class MaximalRectangle {
     public static void main(String[] args) {
-        int[] arr = {6,2,5,4,5,1,6};//{2,1,5,6,2,3};
-        System.out.println(largestRectangleAreaOptimal(arr));
+        List arrayList = Arrays.asList("as", "sasa");
+        ArrayList arrayList1 = new ArrayList(Arrays.asList("xas", "ass"));
+        int[][] mat = {
+                {1,0,1,0,0},
+                {1,0,1,1,1},
+                {1,1,1,1,1},
+                {1,0,0,1,0}
+        };
+
+        System.out.println(maximalRectangle(mat));
     }
 
-    public static int largestRectangleAreaOptimal(int[] arr) {
+    public static int maximalRectangle(int[][] mat) {
+        int n = mat.length;
+        int m = mat[0].length;
+        int[] dp = new int[m];
+        for(int i=0;i<m;i++){
+            dp[i] = (int)mat[0][i];
+        }
+        int maxArea = largestRectangleArea(dp);
+        System.out.println(maxArea);
+        for(int i=1;i<n;i++){
+            for(int j=0;j<m;j++){
+                dp[j] = mat[i][j] != 0 ? (int) mat[i][j] + dp[j] : 0;
+            }
+            System.out.println(Arrays.toString(dp));
+            maxArea = Math.max(maxArea, largestRectangleArea(dp));
+        }
+        return maxArea;
+
+    }
+
+    public static int largestRectangleArea(int[] arr) {
         int[] nsr = new int[arr.length];
         int[] nsl = new int[arr.length];
         Stack<int[]> stack = new Stack<>();
         int max = Integer.MIN_VALUE;
         int n = arr.length;
         //0 consist of val
-        //1 consist of indexhu
+        //1 consist of index
         for(int i=n-1;i>=0;i--){
             while(!stack.isEmpty() && stack.peek()[0] >= arr[i]) stack.pop();
             if(stack.isEmpty()){
@@ -44,35 +73,9 @@ public class LargestRectangleInHistogram {
             stack.push(temp);
         }
 
-        System.out.println(Arrays.toString(nsl));
+        //System.out.println(Arrays.toString(nsl));
         for (int i = 0; i < arr.length; i++) {
             max = Math.max(max, arr[i]*(nsr[i]-nsl[i]-1));
-        }
-        return max;
-    }
-
-    public static int largestRectangleArea(int[] heights) {
-        int max = Integer.MIN_VALUE;
-        for (int i = 0; i < heights.length; i++) {
-            int exten = heights[i];
-            int count = 1;
-            for (int j = i-1; j >=0 ; j--) {
-                if(exten <= heights[j]){
-                    count++;
-                }else{
-                    break;
-                }
-            }
-
-            for (int j = i+1; j < heights.length; j++) {
-                if(exten <= heights[j]){
-                    count++;
-                }else{
-                    break;
-                }
-            }
-            //System.out.println(exten*count);
-            max = Math.max(max, exten*count);
         }
         return max;
     }
