@@ -110,6 +110,12 @@ class MyLinkedList {
 class Node{
     int val;
     Node next;
+
+    public Node() {
+    }
+
+    public Node(int sum) {
+    }
 }
 /*
 public class LinkedList {
