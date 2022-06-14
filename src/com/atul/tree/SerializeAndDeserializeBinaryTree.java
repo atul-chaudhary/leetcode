@@ -5,7 +5,7 @@ import java.util.Queue;
 
 public class SerializeAndDeserializeBinaryTree {
 
-    static class TreeNode {
+    private static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
@@ -19,6 +19,10 @@ public class SerializeAndDeserializeBinaryTree {
             return String.valueOf(val);
         }
     }
+
+
+
+
     public static void main(String[] args) {
         TreeNode node = new TreeNode(1);
         node.left = new TreeNode(2);
