@@ -10,7 +10,43 @@ public class LCS {
 //        for (int[] row : dp){
 //            Arrays.fill(row, -1 );
 //        }
-        System.out.println(lcsDp(a, b, a.length(), b .length(), dp));
+        //System.out.println(lcsDp(a, b, a.length(), b .length(), dp));
+        System.out.println(printingLcs(a, b, a.length(), b.length(), dp));
+    }
+
+    public static int printingLcs(String a, String b, int n, int m, int[][] dp){
+        for(int i=1;i<=n;i++){
+            for (int j = 1; j <=m ; j++) {
+                if(a.charAt(i-1) == b.charAt(j-1)){
+                    dp[i][j] =  1 + dp[i-1][j-1];
+                }else{
+                    dp[i][j] = Math.max(dp[i][j-1], dp[i-1][j]);
+                }
+            }
+        }
+        for (int[] row : dp){
+            System.out.println(Arrays.toString(row));
+        }
+
+        int i = n;
+        int j = m;
+        StringBuilder result = new StringBuilder();
+        while(i>0 && j >0){
+            if(a.charAt(i-1) == b.charAt(j-1)){
+                result.append(a.charAt(i - 1));
+                i--;
+                j--;
+            }else{
+                if(dp[i][j-1] > dp[i-1][j]){
+                    j--;
+                }else{
+                    i--;
+                }
+            }
+        }
+        System.out.println("<<<<<");
+        System.out.println(result);
+        return 0;
     }
 
     public static int lcsDp(String a, String b, int n, int m, int[][] dp){
