@@ -1,13 +1,29 @@
 package com.atul.dynamic_programming;
 
+import java.util.Arrays;
+
 public class LongesCommonSubString {
     public static void main(String[] args) {
         String s = "absc";
         String b = "abc";
         int[][] dp = new int[s.length() + 1][b.length() + 1];
         int[] max = new int[1];
-        System.out.println(LongestCommonSubStringMemo(s, b, s.length(), b.length(), 0, dp, max));
-        System.out.println(max[0]);
+        int len = LongestCommonSubStringMemo(s, b, s.length(), b.length(), 0, dp, max);
+        for(int[] row : dp){
+            System.out.println(Arrays.toString(row));
+        }
+        int row = s.length();
+        int col = b.length();
+        String resultStr  ="";
+        while (dp[row][col] != 0) {
+            resultStr = s.charAt(row - 1) + resultStr; // or Y[col-1]
+            --len;
+
+            // move diagonally up to previous cell
+            row--;
+            col--;
+        }
+        System.out.println(resultStr);
     }
 
     public static int LongestCommonSubStringMemo(String x, String y, int n, int m, int curr_max, int[][] dp, int[] max) {
@@ -19,9 +35,9 @@ public class LongesCommonSubString {
             return dp[n][m];
 
         } else {
-            dp[n][m] = Math.max(LongestCommonSubStringMemo(x, y, n - 1, m, 0, dp, max), LongestCommonSubStringMemo(x, y, n, m - 1, 0, dp, max));
+            Math.max(LongestCommonSubStringMemo(x, y, n - 1, m, 0, dp, max), LongestCommonSubStringMemo(x, y, n, m - 1, 0, dp, max));
             //max[0] = Math.max(max[0], dp[n][m]);
-            return dp[n][m];
+            return dp[n][m] = 0;
         }
 
         //return max[0];
