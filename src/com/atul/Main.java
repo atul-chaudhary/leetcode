@@ -1,44 +1,49 @@
 package com.atul;
 
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
 
 public class Main {
 
-    public static void main(String[] args) {
-        // write your code here
-        int n = 1000000007;
-        System.out.println(n);
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        Singleton s1 = Singleton.getInstance();
 
-        //System.out.println(solve(4, 0, "", new ArrayList<>()));
-        System.out.println(nSolve(0, 0, 4, 0, "", new ArrayList<>()));
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("src/file.txt"));
+        objectOutputStream.writeObject(s1);
+        objectOutputStream.close();
+
+        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("src/file.txt"));
+        Singleton s2 = (Singleton) objectInputStream.readObject();
+        objectInputStream.close();
+
+        System.out.println(s1.hashCode());
+        System.out.println(s2.hashCode());
+    }
+}
+
+class Singleton implements Serializable, Cloneable{
+
+    private static Singleton instance;
+
+    private Singleton() {
     }
 
-
-    public static List<String> nSolve(int ones, int zeros, int size, int idx, String cur, List<String> list) {
-        if (idx == size) {
-            list.add(cur);
-            return list;
+    public static Singleton getInstance(){
+        if(instance == null){
+            synchronized (Singleton.class){
+                if (instance == null){
+                    instance = new Singleton();
+                }
+            }
         }
-
-        if (ones == zeros) {
-            nSolve(ones + 1, zeros, size, idx + 1, cur + "1", list);
-        } else if (ones > zeros) {
-            nSolve(ones + 1, zeros, size, idx + 1, cur + "1", list);
-            nSolve(ones, zeros + 1, size, idx + 1, cur + "0", list);
-        }
-        return list;
+        return instance;
     }
 
-    public static List<String> solve(int size, int idx, String cur, List<String> list) {
-        if (size == idx) {
-            list.add(cur);
-            return list;
-        }
+    protected Object readResolve() {
+        return instance;
+    }
 
-        solve(size, idx + 1, cur + "0", list);
-        solve(size, idx + 1, cur + "1", list);
-        return list;
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return new Exception("can not clone this object");
     }
 }
