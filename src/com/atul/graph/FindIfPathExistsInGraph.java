@@ -1,5 +1,7 @@
 package com.atul.graph;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class FindIfPathExistsInGraph {
@@ -11,17 +13,10 @@ public class FindIfPathExistsInGraph {
             this.v1 = v1;
             this.v2 = v2;
         }
-
-       @Override
-       public String toString() {
-           return "Edge{" +
-                    v1 + " "+
-                   v2 +
-                   '}';
-       }
    }
 
     public static void main(String[] args) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int[][] edges = {{0,1},{0,2},{3,5},{5,4},{4,3}};//{{0, 1}, {1, 2}, {2, 0}};
         int src = 0;
         int dest = 5;
@@ -37,7 +32,6 @@ public class FindIfPathExistsInGraph {
             graph.get(v1).add(new Edge(v1,v2));
             graph.get(v2).add(new Edge(v2, v1));
         }
-        //System.out.println(graph);
         for (ArrayList<Edge> e: graph){
             System.out.println(e);
         }
