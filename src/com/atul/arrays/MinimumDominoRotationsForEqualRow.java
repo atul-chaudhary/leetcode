@@ -10,10 +10,10 @@ public class MinimumDominoRotationsForEqualRow {
     }
 
     public static int minDominoRotations(int[] tops, int[] bottoms) {
-        int[] dice1 = new int[7];
+        int[] dice1 = new int[6];
         int max1 = Integer.MIN_VALUE;
         int index1 = -1;
-        for(int i=1;i<=tops.length;i++){
+        for(int i=0;i<tops.length;i++){
             dice1[tops[i]-1]++;
             if(dice1[tops[i]-1] > max1){
                 max1 = dice1[tops[i]-1];
