@@ -1,49 +1,77 @@
 package com.atul.contest;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class LongestIdealSubsequence {
     public static void main(String[] args) {
-        String s = "acfgbd";
-        int k = 2;
+        String s = "lopjigzbaq";
+        int k = 5;
         System.out.println(longestIdealString(s, k));
     }
 
     public static int longestIdealString(String s, int k) {
-        return solve(s, 0, s.length()-1, k, "");
-     }
+        int[][] dp = new int[s.length()+1][27];
+        for (int[] row : dp) {
+            Arrays.fill(row, -1);
+        }
+        int result = solveMemo(s, 0, 26, k, dp);
+        //int result  = dfs(s, 0, k, 26, dp);
+        for (int[] row : dp) {
+            System.out.println(Arrays.toString(row));
+        }
 
-    private static int solve(String s, int i, int n, int k,String cur){
-        if(i==n){
-            if(cur.length() >=1){
-                if(cur.charAt(cur.length()-1)-s.charAt(i) <= k){
-                    return 1;
-                }
-            }
+        return result;
+    }
+
+    private static int solveMemo(String s, int index, int prev, int k, int[][] dp) {
+        if (index >= s.length()) {
+            return 0;
+        }
+
+        if (dp[index][prev] != -1) return dp[index][prev];
+
+
+        int left = 0;
+        int cur = s.charAt(index) - 'a';
+        if (prev == 26 || Math.abs(prev -cur) <= k) {
+            left = 1 + solveMemo(s, index + 1, cur, k, dp);
+        }
+
+        int right = solveMemo(s, index + 1, prev, k, dp);
+
+        return dp[index][prev] = Math.max(left, right);
+    }
+
+    public static int dfs(String s, int currentPosition, int k, int previousChar, int[][] dp) {
+        if (currentPosition >= s.length()) {
+            return 0;
+        }
+        if (dp[currentPosition][previousChar] != -1) {
+            return dp[currentPosition][previousChar];
+        }
+        int result = dfs(s, currentPosition + 1, k, previousChar, dp);
+
+        int currentChar = s.charAt(currentPosition) - 'a';
+        if (previousChar == 26 || Math.abs(currentChar - previousChar) <= k) {
+            result = Math.max(result, 1 + dfs(s, currentPosition + 1, k, currentChar, dp));
+        }
+        dp[currentPosition][previousChar] = result;
+        return result;
+    }
+
+    private static int solve(String s, int index, char prev, int k) {
+        if (index >= s.length()) {
             return 0;
         }
 
         int left = 0;
-        if(i==0){
-            left = solve(s, i+1, n, k, cur+s.charAt(i));
-        }else if(Math.abs(s.charAt(i)-s.charAt(i+1)) <= k){
-            left = solve(s, i+1, n , k, cur +s.charAt(i));
+        if (prev == ' ' || Math.abs(prev - s.charAt(index)) <= k) {
+            left = 1 + solve(s, index + 1, s.charAt(index), k);
         }
 
-        int right = solve(s, i+1, n, k, cur);
+        int right = solve(s, index + 1, prev, k);
 
-        return left+right;
-    }
-
-    private static int lcs(String a, String b, int n, int m, int k){
-        if(n==0 || m==0){
-            return 0;
-        }
-
-        if(a.charAt(n-1) == b.charAt(m-1) && Math.abs(a.charAt(n-1)-b.charAt(m-1)) <= k){
-            return 1+ lcs(a, b, n-1, m-1, k);
-        }else{
-            return Math.max(lcs(a, b, n-1, m, k), lcs(a, b, n, m-1, k));
-        }
+        return Math.max(left, right);
     }
 }
