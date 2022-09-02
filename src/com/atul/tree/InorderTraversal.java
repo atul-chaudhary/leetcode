@@ -8,7 +8,9 @@ import java.util.Stack;
 public class InorderTraversal {
 
     public static void main(String[] args) {
-
+        //System.out.println((double) 5/100000);
+        double d = Double.parseDouble(String.format("%.5f", 3/100000));
+        System.out.println(d);
     }
 }
 
