@@ -1,5 +1,6 @@
 package com.atul.heap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 
@@ -9,8 +10,33 @@ public class MergeIntervals {
         //System.out.println(Arrays.toString(merge(arr)));
         int[][] result = merge(arr);
         for (int[] row : result) System.out.println(Arrays.toString(row));
+        System.out.println();
+        int[][] finalResult = mergeOpt(arr);
+        for (int[] row : result) System.out.println(Arrays.toString(row));
     }
 
+    public static int[][] mergeOpt(int[][] arr){
+        Arrays.sort(arr, (a, b) -> a[0] - b[0]);
+        for(int[] row : arr) System.out.println(Arrays.toString(row));
+        ArrayList<int[]> result = new ArrayList<>();
+        result.add(new int[]{arr[0][0], arr[0][1]});
+        //System.out.println(Arrays.toString(result.get(0)));
+        for (int i = 1; i < arr.length; i++) {
+            int n = result.size();
+            if(result.get(n-1)[0] <= arr[i][0] && arr[i][0] <= result.get(n-1)[1]){
+                result.get(i-1)[1] = arr[i][1];
+            }else{
+                result.add(new int[]{arr[i][0],arr[i][1]});
+            }
+        }
+        //System.out.println(result);
+        int[][] finalResult = new int[result.size()][2];
+        for (int i = 0; i < result.size(); i++) {
+            finalResult[i][0] = result.get(i)[0];
+            finalResult[i][1] = result.get(i)[1];
+        }
+        return finalResult;
+    }
 
     public static int[][] merge(int[][] arr) {
         class Pair {
