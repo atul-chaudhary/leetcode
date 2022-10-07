@@ -1,9 +1,6 @@
 package com.atul.graph;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class AlienDictionary {
     public static void main(String[] args) {
