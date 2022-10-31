@@ -23,7 +23,14 @@ public class HeightBinaryTreeAfterSubtreeRemoval {
         root.right = new TreeNode(4);
         root.right.right = new TreeNode(5);
 
-        System.out.println(Arrays.toString(treeQueries(root, new int[]{4})));
+        int n = 125;
+        int sum = 0;
+        while(n>0){
+            sum+=n%10;
+            n/=10;
+        }
+        System.out.println(sum);
+        //System.out.println(Arrays.toString(treeQueries(root, new int[]{4})));
     }
 
     public static int[] treeQueries(TreeNode root, int[] queries) {

@@ -8,31 +8,7 @@ public class NextGreaterElementIV {
         int[] nums = {2,4,0,9,6};
         //System.out.println(Arrays.toString(secondGreaterElement(nums)));
         //System.out.println(15/2);
-        System.out.println(makeIntegerBeautiful(1, 1));
-    }
-
-    public static long makeIntegerBeautiful(long n, int target) {
-        long i = 0;
-        while(true){
-            if(sum(n+i) <= target){
-                return i;
-            }
-            i++;
-        }
-    }
-
-    private static int sum(long n){
-        String s = String.valueOf(n);
-        char[] arr = s.toCharArray();
-        int sum = 0;
-        for(char ch : arr){
-            sum+= (int) ch-'0';
-        }
-        return sum;
-    }
-
-    public static int[] secondGreaterElement(int[] nums) {
-        return getNextGreater(nums, nums.length);
+        System.out.println(Arrays.toString(getNextGreater(nums, nums.length)));
     }
 
     private static int[] getNextGreater(int[] arr, int n){
