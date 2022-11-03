@@ -5,12 +5,37 @@ import java.util.Stack;
 
 public class NextGreaterElementIII {
     public static void main(String[] args) {
-        int n = 21;
+        int[] nums = {3,1,2,4};
+        System.out.println(nse(nums));
+    }
+
+    private static int nse(int[] nums){
+        int n = nums.length;
+        int[] nsr = new int[n];
         Stack<Integer> stack = new Stack<>();
-        stack.push(12);
-        stack.push(14);
-        System.out.println(stack.elementAt(1));
-        System.out.println(nextGreaterElement(n));
+        for (int i = n-1; i >= 0; i--) {
+            while(!stack.isEmpty() && nums[stack.peek()] >= nums[i]){
+                stack.pop();
+            }
+            if(stack.isEmpty()) nsr[i] = n-i;
+            else nsr[i] = Math.abs(stack.peek()-i);
+            stack.push(i);
+        }
+        stack.clear();
+        int[] nsl = new int[n];
+        for (int i = 0; i < n; i++) {
+            while(!stack.isEmpty() && nums[stack.peek()] >= nums[i]) stack.pop();
+            if (stack.isEmpty()) nsl[i] = i+1;
+            else nsl[i] = Math.abs(i-stack.peek());
+            stack.push(i);
+        }
+        long mod = (long) 1e9 +7;
+        long result = 0;
+        for (int i = 0; i < n; i++) {
+            result+=(long) nums[i]*nsl[i]*nsr[i];
+            result%=mod;
+        }
+        return (int)result;
     }
 
     public static int nextGreaterElement(int n) {
