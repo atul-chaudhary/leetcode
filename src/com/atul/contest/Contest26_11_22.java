@@ -4,25 +4,50 @@ import java.util.Arrays;
 
 public class Contest26_11_22 {
     public static void main(String[] args) {
-      String s = "YYNY";
+        String s = "YYYY";
         System.out.println(bestClosingTime(s));
     }
 
     public static int bestClosingTime(String customers) {
         int n = customers.length();
-        int[] yes = new int[n];
-        int[] nos = new int[n];
-        for(int i=n-2;i>=0;i--){
-            if(customers.charAt(i+1)=='Y'){
-                yes[i]+=yes[i+1]+1;
+        int[] pre_yes = new int[n];
+        int[] pre_no = new int[n];
+        int yes = 0;
+        int no = 0;
+        int j = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            if (customers.charAt(i) == 'Y') {
+                yes++;
+            }
+            if (customers.charAt(j) == 'N') {
+                no++;
+            }
+            pre_no[j++] = no;
+            pre_yes[i] = yes;
+        }
+        int index = -1;
+        int min = pre_yes[0];
+        for (int i = 0; i <= n; i++) {
+            if (i < n) {
+                int n0 = 0;
+                if (i > 0) n0 = pre_no[i - 1];
+                int cal = (pre_yes[i]) + n0;
+                if (cal < min) {
+                    min = cal;
+                    index = i;
+                }
+            } else {
+                int cal = pre_no[i - 1];
+                if (cal < min) {
+                    min = cal;
+                    index = i;
+                }
             }
         }
-        System.out.println(Arrays.toString(yes));
-        System.out.println(Arrays.toString(nos));
-        return 0;
+        return index == -1 ? 0 : index;
     }
 
-    public  static int[][] onesMinusZeros(int[][] arr) {
+    public static int[][] onesMinusZeros(int[][] arr) {
         int n = arr.length;
         int m = arr[0].length;
 
@@ -30,14 +55,14 @@ public class Contest26_11_22 {
         int[] zeroCols = new int[m];
 
 
-        int [] oneRows = new int[n];
+        int[] oneRows = new int[n];
         int[] zeroRows = new int[n];
-        for(int i=0;i<n;i++){
+        for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                if(arr[i][j] == 1){
+                if (arr[i][j] == 1) {
                     oneRows[i]++;
                     oneCols[j]++;
-                }else{
+                } else {
                     zeroCols[j]++;
                     zeroRows[i]++;
                 }
