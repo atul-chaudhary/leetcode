@@ -1,11 +1,14 @@
 package com.atul.contest;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Contest26_11_22 {
     public static void main(String[] args) {
         String s = "YYYY";
         System.out.println(bestClosingTime(s));
+        Map<Integer, int[]> map = new HashMap<>();
     }
 
     public static int bestClosingTime(String customers) {
