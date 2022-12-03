@@ -69,7 +69,6 @@ public class ImplementTriell {
         public void erase(String word) {
             // Write your code here.
         }
-
     }
 
 }
