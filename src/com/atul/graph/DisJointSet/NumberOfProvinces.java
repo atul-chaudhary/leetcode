@@ -91,7 +91,6 @@ public class NumberOfProvinces {
                 }
             }
         }
-
         int count = 0;
         for (int i = 0; i < V; i++) {
             if (ds.parent.get(i) == i) {
