@@ -4,18 +4,21 @@ import java.util.*;
 
 public class MinimumOperationsToReduceXToZero {
     public static void main(String[] args) {
-        int[][] edges = {{10,16},{2,8},{1,6},{7,12}};
+        int[][] edges = {{-2147483646,-2147483645},{2147483646,2147483647}};//{{1,2},{2,3},{3,4},{4,5}};//{{1,2},{3,4},{5,6},{7,8}};//{{10,16},{2,8},{1,6},{7,12}};
         System.out.println(findMinArrowShots(edges));
     }
 
     //this question is easy
     public static int findMinArrowShots(int[][] points) {
         int n = points.length;
-        Arrays.sort(points, (a, b)->a[0]-b[0]);
+        Arrays.sort(points, (a, b)->Integer.compare(a[0],b[0]));
         for(int[] row : points) System.out.println(Arrays.toString(row));
         int count = 1;
+        long min = points[0][1];
         for (int i = 1; i < n; i++) {
-            if(points[i][0] > points[i-1][1]){
+            long num = points[i][0];
+            if(num > min){
+                min = points[i][1];
                 count++;
             }
         }
