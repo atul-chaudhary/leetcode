@@ -34,8 +34,6 @@ public class MaximizeDistanceToClosestPerson {
                 right[i] = lastIndex;
             }
         }
-        System.out.println(Arrays.toString(left));
-        System.out.println(Arrays.toString(right));
         int max = 1;
         for (int i = 0; i < n; i++) {
             if (nums[i] == 1) continue;
