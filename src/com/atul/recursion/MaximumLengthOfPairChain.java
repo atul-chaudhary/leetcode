@@ -14,7 +14,26 @@ public class MaximumLengthOfPairChain {
         int n = nums.length;
         Arrays.sort(nums, (a, b) -> a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]);
         Map<String, Integer> dp = new HashMap<>();
+        System.out.println(solveTab(nums));
         return solve(nums, 0, -1, dp);
+    }
+
+    private static int solveTab(int[][] nums){
+        int n = nums.length;
+        int[][] dp = new int[n+1][n+1];
+        for (int index = n-1; index >= 0; index--) {
+            for (int prev = n-1; prev >=-1 ; prev--) {
+                int pick = 0;
+                if (prev == -1 || nums[prev][1] < nums[index][0]) {
+                    pick = 1 + dp[index + 1][index];
+                }
+                int notPick = dp[index + 1][prev+1];
+                int num = Math.max(notPick, pick);
+                dp[index][prev+1] = num;
+            }
+        }
+
+        return dp[0][0];
     }
 
     private static int solve(int[][] nums, int index, int prev, Map<String, Integer> dp) {

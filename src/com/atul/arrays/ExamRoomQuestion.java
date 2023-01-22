@@ -1,10 +1,10 @@
 package com.atul.arrays;
 
 import java.util.Arrays;
+import java.util.TreeSet;
 
 public class ExamRoomQuestion {
     public static void main(String[] args) {
-        System.out.println(Integer.toBinaryString(32));
         ExamRoom examRoom = new ExamRoom(4);
         System.out.println(examRoom.seat());
         System.out.println(examRoom.seat());
@@ -16,22 +16,38 @@ public class ExamRoomQuestion {
     }
 
     static class ExamRoom {
-        int[] nums = null;
-        int count = 0;
+        TreeSet<Integer> set = new TreeSet<>();
         int n;
 
         public ExamRoom(int n) {
-            nums = new int[n];
             this.n = n;
         }
 
         public int seat() {
-            return 0;
+            if(set.isEmpty()){
+                set.add(0);
+                return 0;
+            }
+            int mid = 0;
+            int index = 0;
+            int left = set.first();
+            int diff = left;
+            for(int right: set){
+                if(left == right) continue;
+                mid = (left+right)/2;
+                if(diff < Math.min(mid-left, right-mid) && !set.contains(mid)){
+                    diff = Math.min(mid-left, right-mid);
+                    index = mid;
+                }
+            }
+
+            int last = set.last();
+            if(n-last > diff) index = n;
+            return index;
         }
 
         public void leave(int p) {
-            nums[p] = 0;
-            count--;
+            set.remove(p);
         }
     }
 
