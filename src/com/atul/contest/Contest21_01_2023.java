@@ -1,14 +1,76 @@
 package com.atul.contest;
 
+
 import java.util.*;
 
 public class Contest21_01_2023 {
     public static void main(String[] args) {
-        int[] nums1 = {4,3,1,4};
-        int[] nums2 = {1,3,7,1};
-        int k = 3;
-        System.out.println(minOperations(nums1, nums2, k));
+       int[] nums1 = {4,2,3,1,1};
+       int[] nums2 = {7,5,10,9,6};
+       int k = 1;
+        System.out.println(maxScoreOpt(nums1, nums2, k));
     }
+
+    static class Pair {
+        int i;
+        int j;
+
+        public Pair(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+    }
+
+    public static long maxScoreOpt(int[] nums1, int[] nums2, int k) {
+        int n = nums1.length;
+        Pair[] nums = new Pair[n];
+        for (int i = 0; i < n; i++) {
+            nums[i] = new Pair(nums1[i], nums2[i]);
+        }
+        Arrays.sort(nums, (a, b) -> b.j - a.j);
+        Queue<Integer> pq = new PriorityQueue<>();
+        long sum = 0;
+        for (int i = 0; i < k; i++) {
+            Pair pair = nums[i];
+            pq.offer(pair.i);
+            sum += pair.i;
+        }
+
+        long result = sum * nums[k-1].j;
+        for (int i = k; i < n; i++) {
+            if(pq.size() == k) sum-=pq.poll();
+            pq.offer(nums[i].i);
+            sum+=nums[i].i;
+            result = Math.max(result, sum*nums[i].j);
+        }
+        return result;
+    }
+
+    public static long minOperationsopt(int[] nums1, int[] nums2, int k) {
+        int n = nums1.length;
+        long negCount = 0;
+        long postCount = 0;
+        long sameCount = 0;
+        for (int i = 0; i < n; i++) {
+            int num = nums2[i] - nums1[i];
+            if (num == 0) {
+                sameCount++;
+                continue;
+            }
+            if (k == 0 && num != 0) return -1;
+            if (num % k != 0) return -1;
+            if (num < 0) {
+                negCount += num;
+            } else if (num > 0) {
+                postCount += num;
+            }
+        }
+        System.out.println(sameCount);
+        if (sameCount == n) return 0;
+        if (Math.abs(negCount) != postCount) return -1;
+        return postCount / k;
+    }
+
 
     public static long minOperations(int[] nums1, int[] nums2, int k) {
         Queue<Integer> ps = new PriorityQueue<>(Comparator.reverseOrder());
@@ -61,7 +123,6 @@ public class Contest21_01_2023 {
         long notPick = solve(nums1, nums2, index + 1, sum, min, k, count);
         return Math.max(pick, notPick);
     }
-
 
 
     public static int getCommon(int[] nums1, int[] nums2) {
