@@ -20,7 +20,6 @@ public class AddOneRowToTree {
     static class TreeNode {
         TreeNode left, right;
         int value;
-
         public TreeNode(int value) {
             this.value = value;
         }
@@ -34,6 +33,7 @@ public class AddOneRowToTree {
         while (!pq.isEmpty()) {
             int size = pq.size();
             cur++;
+            boolean flag = true;
             for (int i = 0; i < size; i++) {
                 TreeNode node = pq.poll();
                 if (cur == depth) {
@@ -45,14 +45,17 @@ public class AddOneRowToTree {
                     node.right = newNodeRight;
                     newNodeLeft.left = tempLeft;
                     newNodeRight.right = tempRight;
+                    flag = false;
                 }
 
-                if (node.left != null) {
-                    pq.offer(node.left);
-                }
+                if(flag) {
+                    if (node.left != null) {
+                        pq.offer(node.left);
+                    }
 
-                if (node.right != null) {
-                    pq.offer(node.right);
+                    if (node.right != null) {
+                        pq.offer(node.right);
+                    }
                 }
             }
         }
