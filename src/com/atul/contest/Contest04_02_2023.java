@@ -4,23 +4,36 @@ import java.util.*;
 
 public class Contest04_02_2023 {
     public static void main(String[] args) {
-        int[] nums = {1,1,2,2,3,3,5};
+        int[] nums = {1, 1, 2, 2, 3, 3, 5};
         int k = 2;
         System.out.println(maximizeWin(nums, k));
     }
 
-    public static int maximizeWin(int[] prizePositions, int k) {
-        return solve(prizePositions, 0, k);
+
+    public static int maximizeWin(int[] nums, int k) {
+        int n = nums.length;
+        int[] ranges = new int[n + 1];
+        solve(nums, ranges, 0, k);
+
+        int finalResult = Integer.MIN_VALUE;
+        for (int i = 0; i < n; i++) {
+            int right = findLastIndex(nums, nums[i] + k);
+            int curResult = right - i + 1;
+            curResult += ranges[right + 1];
+            finalResult = Math.max(finalResult, curResult);
+        }
+        return finalResult;
     }
 
-    private static int solve(int[] nums, int index, int k) {
+    private static int solve(int[] nums, int[] ranges, int index, int k) {
         if (index >= nums.length) return 0;
-
-        int result = solve(nums, index + 1, k);
-        int startWithIndex = nums[index] + k;
-        int findLastIndex = findLastIndex(nums, startWithIndex);
-
-        return Math.max(result, findLastIndex-index+1);
+        int start = nums[index];
+        int end = start + k;
+        int lastIndexOfEnd = findLastIndex(nums, end);
+        int curResult = lastIndexOfEnd - index + 1;
+        curResult = Math.max(curResult, solve(nums, ranges, index + 1, k));
+        ranges[index] = curResult;
+        return curResult;
     }
 
     private static int findLastIndex(int[] nums, int num) {
@@ -30,10 +43,8 @@ public class Contest04_02_2023 {
         int resultIndex = -1;
         while (left <= right) {
             int mid = (left + right) / 2;
-            if (nums[mid] == num) {
+            if (nums[mid] <= num) {
                 resultIndex = mid;
-                left = mid + 1;
-            } else if (nums[mid] < num) {
                 left = mid + 1;
             } else {
                 right = mid - 1;
