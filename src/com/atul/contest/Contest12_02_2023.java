@@ -4,13 +4,50 @@ import java.util.*;
 
 public class Contest12_02_2023 {
     public static void main(String[] args) {
-        String str1 = "456";
-        String str2 = "77";
-        System.out.println(addStrings(str1, str2));
+        String str1 = "9133";
+        String str2 = "0";
+        System.out.println(multiply(str1, str2));
     }
 
-    public String multiply(String num1, String num2) {
-        return "";
+
+    public static String multiply(String num1, String num2) {
+        int n1 = num1.length();
+        int n2 = num2.length();
+        String result = "0";
+        int space = 0;
+        for (int i = n1 - 1; i >= 0; i--) {
+            int carry = 0;
+            StringBuilder temp1 = new StringBuilder();
+            for (int k = 0; k < space; k++) {
+                temp1.append(0);
+            }
+            for (int j = n2 - 1; j >= 0; j--) {
+                int sum = 1;
+                sum *= Integer.parseInt(String.valueOf(num1.charAt(i)));
+                sum *= Integer.parseInt(String.valueOf(num2.charAt(j)));
+                sum+=carry;
+                if(sum > 9){
+                    carry = sum/10;
+                    int num = sum %10;
+                    temp1.append(num);
+                }else {
+                    carry = 0;
+                    temp1.append(sum);
+                }
+            }
+            if(carry != 0) temp1.append(carry);
+            result = addStrings(result, temp1.reverse().toString());
+            space++;
+        }
+        //condition for checking all zero case
+        boolean flag = true;
+        for (int i = 0; i < result.length(); i++) {
+            if(result.charAt(i) != '0'){
+                flag = false;
+            }
+        }
+        if(flag) return "0";
+        return result;
     }
 
     public static String addStrings(String num1, String num2) {

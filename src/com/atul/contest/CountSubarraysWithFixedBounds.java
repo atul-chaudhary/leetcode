@@ -1,6 +1,6 @@
 package com.atul.contest;
 
-public interface CountSubarraysWithFixedBounds {
+public class CountSubarraysWithFixedBounds {
     public static void main(String[] args) {
         int min  = 1;
         int max = 1;
