@@ -8,6 +8,20 @@ public class Contest19_02_2023 {
         System.out.println(squareFreeSubsets(nums));
     }
 
+    public int minOperations(int n) {
+        int[] dp = new int[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            int power = (int) (Math.log(i) / Math.log(2));
+            int cur = (int) Math.pow(2, power);
+            dp[i] = 1 + dp[i - cur];
+
+            cur = (int) Math.pow(2, 1 + power);
+            dp[i] = Math.min(dp[i], 1 + dp[cur - i]);
+        }
+        return dp[n];
+    }
+
     class Solution {
         public int[][] mergeArrays(int[][] nums1, int[][] nums2) {
             TreeMap<Integer, Integer> treeMap = new TreeMap<Integer, Integer>();
