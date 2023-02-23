@@ -4,8 +4,53 @@ import java.util.TreeMap;
 
 public class Contest19_02_2023 {
     public static void main(String[] args) {
-        int[] nums = {8, 11, 17, 2, 25, 29, 21, 20, 4, 22};
-        System.out.println(squareFreeSubsets(nums));
+        int[] nums = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        System.out.println(shipWithinDays(nums, 5));
+    }
+
+    public static int shipWithinDays(int[] weights, int days) {
+        int sum = 0;
+        for (int it : weights) {
+            sum += it;
+        }
+        System.out.println(sum+" sum");
+        int left = 0;
+        int right = sum;
+        int mid = -1;
+        while (left <= right) {
+            mid = (left + right) / 2;
+            if (solve(mid, weights, days)) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+            System.out.println(left + "<<>>" + right + "<<>>" + mid);
+        }
+        return left;
+    }
+
+    private static boolean solve(int mid, int[] weights, int days) {
+        int index = 0;
+        int curDay = 0;
+        int n = weights.length;
+
+        for (index = 0; index < n; index++) {
+            int curMid = mid;
+            boolean flag = false;
+            while (index < n && weights[index] <= curMid) {
+                curMid -= weights[index++];
+                flag = true;
+            }
+            if(flag) index--;
+            curDay++;
+            if (curDay >= days) return false;
+            if (index < n && weights[index] > mid) return false;
+        }
+        if (curDay >= days) {
+            return false;
+        }
+        System.out.println(mid+" mid "+curDay);
+        return true;
     }
 
     public int minOperations(int n) {
