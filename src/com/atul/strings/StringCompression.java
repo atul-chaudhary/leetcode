@@ -4,9 +4,31 @@ import java.util.*;
 
 public class StringCompression {
     public static void main(String[] args) {
-        int a = 2;
-        int b = 3;
-        System.out.println(9659 % 10);
+        String str = "aaa";
+        System.out.println(strStr(str, "aaaa"));
+    }
+
+    public static int strStr(String haystack, String needle) {
+        int n = haystack.length();
+        int m = needle.length();
+        for (int i = 0; i < n; i++) {
+            char ch = haystack.charAt(i);
+            if (ch == needle.charAt(0)) {
+                int indexHay = i + 1;
+                int indexNeed = 1;
+                boolean flag = true;
+                while (indexHay < n && indexNeed < m) {
+                    if (haystack.charAt(indexHay++) != needle.charAt(indexNeed++)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag && indexNeed >= m) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     static long solve(long a, long b, long N) {
