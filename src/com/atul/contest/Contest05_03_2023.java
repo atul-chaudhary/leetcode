@@ -9,7 +9,22 @@ public class Contest05_03_2023 {
     }
 
     public int findKthPositive(int[] arr, int k) {
-        return 0;
+        int n = arr.length;
+        HashSet<Integer> set = new HashSet<>();
+        for (int i = 0; i < n; i++) {
+            set.add(arr[i]);
+        }
+
+        int count = 0;
+        for (int i = 1; i < 1000; i++) {
+            if(!set.contains(arr[i])){
+                count++;
+                if(count == k){
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     static int mod = (int) 1e9 + 7;
