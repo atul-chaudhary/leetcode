@@ -3,6 +3,7 @@ package com.atul.unkown;
 
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
@@ -50,7 +51,7 @@ public class JusPay {
     }
 
     //2 question
-    public static void main(String[] args) throws Exception {
+    /*public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String[] input = br.readLine().trim().split(" ");
         int e = Integer.parseInt(input[0]);
@@ -78,7 +79,7 @@ public class JusPay {
             System.out.print(z + " ");
         }
     }
-
+*/
     //third
     static class DSU {
         HashMap<Integer, Integer> parent = new HashMap<>();
@@ -115,78 +116,76 @@ public class JusPay {
         }
     }
 
-//    public static void main(String[] args) throws Exception {
-//        Scanner sc = new Scanner(System.in);
-//        int n = Integer.parseInt(sc.nextLine());
-//        DSU dsu = new DSU();
-//        for (int i = 0; i < n; i++) {
-//            dsu.addMember(Integer.parseInt(sc.nextLine()));
-//        }
-//        n = Integer.parseInt(sc.nextLine());
-//        for (int i = 0; i < n; i++) {
-//            String line = sc.nextLine();
-//            String[] arr = line.split(" ");
-//            dsu.union(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]));
-//        }
-//        int one = Integer.parseInt(sc.nextLine());
-//        int two = Integer.parseInt(sc.nextLine());
-//        if ((dsu.getParent(one) == dsu.getParent(two))) {
-//            System.out.println(1);
-//        } else {
-//            System.out.println(0);
-//        }
-//    }
-}
+    public static void main(String[] args) throws Exception {
+        Scanner sc = new Scanner(System.in);
+        int n = Integer.parseInt(sc.nextLine());
+        DSU dsu = new DSU();
+        for (int i = 0; i < n; i++) {
+            dsu.addMember(Integer.parseInt(sc.nextLine()));
+        }
+        n = Integer.parseInt(sc.nextLine());
+        for (int i = 0; i < n; i++) {
+            String line = sc.nextLine();
+            String[] arr = line.split(" ");
+            dsu.union(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]));
+        }
+        int one = Integer.parseInt(sc.nextLine());
+        int two = Integer.parseInt(sc.nextLine());
+        if ((dsu.getParent(one) == dsu.getParent(two))) {
+            System.out.println(1);
+        } else {
+            System.out.println(0);
+        }
+    }
+
 
 //1 question
 /*
 public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int n = Integer.parseInt(br.readLine());
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(bufferedReader.readLine());
         HashMap<Integer, List<int[]>> graph = new HashMap<>();
-        Map<Integer, Integer> dist = new HashMap<>();
+        Map<Integer, Integer> distance = new HashMap<>();
         for (int i = 0; i < n; i++) {
-            int vert = Integer.parseInt(br.readLine());
-            dist.put(vert, (int) 1e9);
+            int vert = Integer.parseInt(bufferedReader.readLine());
+            distance.put(vert, (int) 1e9);
             graph.putIfAbsent(vert, new ArrayList<>());
         }
-        int m = Integer.parseInt(br.readLine());
+        int m = Integer.parseInt(bufferedReader.readLine());
         for (int i = 0; i < m; i++) {
-            String line = br.readLine();
+            String line = bufferedReader.readLine();
             String[] split = line.split(" ");
-            int u = Integer.parseInt(split[0]);
-            int v = Integer.parseInt(split[1]);
-            int t = Integer.parseInt(split[2]);
-            graph.get(u).add(new int[]{v, t});
+            int vertU = Integer.parseInt(split[0]);
+            int vertV = Integer.parseInt(split[1]);
+            int time = Integer.parseInt(split[2]);
+            graph.get(vertU).add(new int[]{vertV, time});
         }
-        int a = Integer.parseInt(br.readLine());
-        int b = Integer.parseInt(br.readLine());
-//        System.out.println();
-//        System.out.println(graph+"<<>>");
-//        System.out.println("a"+a);
-//        System.out.println("b"+b);
-        Queue<int[]> pq = new PriorityQueue<>((a1, b1) -> a1[1] - b1[1]);
+        int a = Integer.parseInt(bufferedReader.readLine());
+        int b = Integer.parseInt(bufferedReader.readLine());
+        Queue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a2 -> a2[1]));
         pq.offer(new int[]{a, 0});
-        dist.put(a, 0);
+        distance.put(a, 0);
         while (!pq.isEmpty()) {
             int[] node = pq.poll();
             int vert = node[0];
             int time = node[1];
             for (int[] child : graph.get(vert)) {
                 int newTime = time + child[1];
-                int oldTime = dist.get(child[0]);
+                int oldTime = distance.get(child[0]);
                 if (newTime < oldTime) {
-                    dist.put(child[0], newTime);
+                    distance.put(child[0], newTime);
                     pq.offer(new int[]{child[0], newTime});
                 }
             }
         }
 
-        int ans = dist.get(b);
+        int ans = distance.get(b);
         if(ans == (int)1e9){
             System.out.println(-1);
         }else{
             System.out.println(ans);
         }
     }
+
  */
+}

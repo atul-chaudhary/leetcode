@@ -9,109 +9,93 @@ class TestClass {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
-
         int n = Integer.parseInt(br.readLine());
-        int[] members = new int[n];
-        for(int i=0; i < n ; i++)
-            members[i] = Integer.parseInt(br.readLine());
+        int[] vertexNumber = new int[n];
+        for (int i = 0; i < n; i++)
+            vertexNumber[i] = Integer.parseInt(br.readLine());
 
         int e = Integer.parseInt(br.readLine());
-        int[][] fF = new int[e][];
-        for(int i=0; i < e; i++)
-        {
-            fF[i] = Arrays.stream(br.readLine().split("\\s+")).mapToInt
+        int[][] edges = new int[e][];
+        for (int i = 0; i < e; i++) {
+            edges[i] = Arrays.stream(br.readLine().split("\\s+")).mapToInt
                     (Integer::parseInt).toArray();
         }
 
         int A = Integer.parseInt(br.readLine());
         int B = Integer.parseInt(br.readLine());
 
-        HashMap<Integer, Integer> hmap = new HashMap<Integer, Integer>()
-        {{
-            for (int i = 0; i < n; i++)
-            {
-                putIfAbsent(members[i],i);
-            }
-        }};
-
-        HashMap<Integer, Integer> revMap = new HashMap<Integer, Integer>()
-        {{
-            for (int i = 0; i < n; i++)
-            {
-                putIfAbsent(i,members[i]);
-            }
-        }};
-
-        int src = hmap.get(A);
-        int dest = hmap.get(B);
-
-        Graph g = new Graph(n);
-        for(int[] edge :fF)
-        {
-            int u = hmap.get(edge[0]);
-            int v = hmap.get(edge[1]);
-            g.addEdge(u,v);
+        Map<Integer, Integer> mapYo = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            mapYo.putIfAbsent(vertexNumber[i], i);
         }
-        TreeSet<Integer> nodes = g.DFS(src,dest);
 
-        if(nodes.isEmpty()) {
+        Map<Integer, Integer> mapRev = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            mapRev.putIfAbsent(i, vertexNumber[i]);
+        }
+
+        int a = mapYo.get(A);
+        int b = mapYo.get(B);
+
+        Graph graph = new Graph(n);
+        for (int[] edge : edges) {
+            int u = mapYo.get(edge[0]);
+            int v = mapYo.get(edge[1]);
+            graph.edges(u, v);
+        }
+        TreeSet<Integer> nodes = graph.dfs(a, b);
+        if (nodes.isEmpty()) {
             bw.write("-1\n");
-        }
-        else
-        {
-            bw.write(nodes.stream().map(elem -> revMap.get(elem)).collect(Collectors.toList()).toString().replaceAll("\\[|]|, ", " ") + "\n");
+        } else {
+            bw.write(nodes.stream().map(elem -> mapRev.get(elem)).collect(Collectors.toList()).toString().replaceAll("\\[|]|, ", " ") + "\n");
         }
         bw.flush();
     }
 }
 
-class Graph
-{
+class Graph {
     private int V;
     private List<Integer>[] adj;
-    @SuppressWarnings("unchecked")
-    Graph(int V)
-    {
-        this.V = V;
-        this.adj = new List[V];
-        for (int i = 0; i < V ; i++)
-        {
+
+    Graph(int n) {
+        this.V = n;
+        this.adj = new List[n];
+        for (int i = 0; i < n; i++) {
             this.adj[i] = new LinkedList<>();
         }
     }
 
-    public void addEdge(int src, int dest)
-    {
-        this.adj[src].add(dest);
+    public void edges(int a, int b) {
+        this.adj[a].add(b);
     }
 
-    public TreeSet<Integer> DFS(int src,int dest)
-    {
-        TreeSet<Integer> tset = new TreeSet<>();
-        if(src==dest){
-            tset.add(src);
+    public TreeSet<Integer> dfs(int a, int b) {
+        TreeSet<Integer> map = new TreeSet<>();
+        if (a == b) {
+            map.add(a);
         }
         boolean[] vis = new boolean[V];
-        vis[src] = true;
+        vis[a] = true;
 
-        for(int neigh:this.adj[src]) {
-            if(neigh==dest){
-                tset.add(src);
-            } else if(!vis[neigh]) {
-                if(dfsUtil(neigh,dest,vis))
-                    tset.add(neigh);
+        for (int it : this.adj[a]) {
+            if (it == b) {
+                map.add(a);
+            } else if (!vis[it]) {
+                if (dfsUtil(it, b, vis))
+                    map.add(it);
             }
         }
-        return tset;
+        return map;
     }
-    private boolean dfsUtil(int src,int dest,boolean[] vis) {
-        vis[src]=true;
-        if(src==dest)
+
+    private boolean dfsUtil(int a, int b, boolean[] vis) {
+        vis[a] = true;
+        if (a == b)
             return true;
 
-        for(int neigh:this.adj[src]){
-            if(!vis[neigh])
-                if(dfsUtil(neigh,dest,vis)) {
+        for (int neigh : this.adj[a]) {
+            if (!vis[neigh])
+                if (dfsUtil(neigh, b, vis)) {
                     return true;
                 }
         }
