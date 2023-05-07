@@ -1,12 +1,30 @@
 package com.atul.contest;
+
 import java.util.*;
 
 public class Contest30_04_2023 {
     public static void main(String[] args) {
-        int[][] grid = {{1, 2, 3},
-                {4, 5, 6},
-                {7, 8, 9}};
-        System.out.println(diagonalSum(grid));
+        int[] nums = {9, 72, 34, 29, -49, -22, -77, -17, -66, -75, -44, -30, -24};
+        System.out.println(arraySign(nums));
+    }
+
+    public static int arraySign(int[] nums) {
+        long num = 1;
+        int neg = 0;
+        boolean isZero = false;
+        for (int it : nums) {
+            if (it == 0) {
+                isZero = true;
+            }
+
+            if (it < 0) {
+                neg++;
+            }
+        }
+
+        if (isZero) return 0;
+        else if (neg % 2 == 0) return 1;
+        else return 0;
     }
 
     public static int diagonalSum(int[][] mat) {
