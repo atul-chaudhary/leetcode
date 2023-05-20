@@ -1,0 +1,256 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Deedy - One Page Two Column Resume
+% LaTeX Template
+% Version 1.2 (16/9/2014)
+%
+% Original author:
+% Debarghya Das (http://debarghyadas.com)
+%
+% Original repository:
+% https://github.com/deedydas/Deedy-Resume
+%
+% IMPORTANT: THIS TEMPLATE NEEDS TO BE COMPILED WITH XeLaTeX
+%
+% This template uses several fonts not included with Windows/Linux by
+% default. If you get compilation errors saying a font is missing, find the line
+% on which the font is used and either change it to a font included with your
+% operating system or comment the line out to use the default font.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% TODO:
+% 1. Integrate biber/bibtex for article citation under publications.
+% 2. Figure out a smoother way for the document to flow onto the next page.
+% 3. Add styling information for a "Projects/Hacks" section.
+% 4. Add location/address information
+% 5. Merge OpenFont and MacFonts as a single sty with options.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% CHANGELOG:
+% v1.1:
+% 1. Fixed several compilation bugs with \renewcommand
+% 2. Got Open-source fonts (Windows/Linux support)
+% 3. Added Last Updated
+% 4. Move Title styling into .sty
+% 5. Commented .sty file.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Known Issues:
+% 1. Overflows onto second page if any column's contents are more than the
+% vertical limit
+% 2. Hacky space on the first bullet point on the second column.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\documentclass[]{deedy-resume-openfont}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     LAST UPDATED DATE
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\lastupdated
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     TITLE NAME
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\namesection{Atul}{Chaudhary}{
+\href{mailto:chaudharyatul444@gmail.com}{chaudharyatul444@gmail.com} | +91 9756516904
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     COLUMN ONE
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{minipage}[t]{0.33\textwidth}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     EDUCATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Education}
+
+\subsection{Meerut Institute of}
+\subsection{Engg \& Technology}
+\descript{B.Tech in Computer Science}
+\location{2016 - 2020 | CGPA 8.4}
+\sectionsep
+
+\subsection{J.P Academy}
+\descript{Sr. Secondary (12th)}
+\location{2015 - 2016 | Meerut, UP, India}
+\location{ Cum. Per: 85.2\%}
+\sectionsep
+
+\subsection{J.P Academy}
+\descript{Secondary School (10th)}
+\location{2013 - 2014 | Meerut, UP, India}
+\location{ CGPA : 8.4 }
+\sectionsep
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     SKILLS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Skills}
+\subsection{Programming}
+\location{Proficient:}
+\textbullet{}Java \\
+\textbullet{} Spring-boot \\
+\textbullet{} Micro-Services \\
+\textbullet{} Rest API's \\
+\textbullet{} jenkins \\
+\textbullet{}  MongoDB \\
+\textbullet{}  Amazon Web Services \\
+\location{Familiar:}
+\textbullet{} Python \\
+\textbullet{} HTML \\
+\textbullet{} CSS \\
+\textbullet{} React \\
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     LINKS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Links}
+Leetcode:// \href{https://leetcode.com/atul-chaudhary/}{\bf atul-chaudhary} \\
+Github:// \href{https://github.com/atul-chaudhary}{\bf atul-chaudhary} \\
+StackOverflow://  \href{https://stackoverflow.com/users/8145335/atul-chaudhary}{\bf atul-chaudhary} \\
+LinkedIn://  \href{https://www.linkedin.com/in/atul-chaudhary/}{\bf atul-chaudhary} \\
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     COURSEWORK
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Coursework}
+\subsection{Undergraduate}
+Data Structures and Algorithms  \\
+Object Oriented Programming \\
+Operating Systems \\
+Database Management System \\
+Computer Networks \\
+Cloud Computing \\
+
+\sectionsep
+
+\subsection{Training}
+\location{Infosys}
+Java-Angular FullStack Training \\
+\location{Geeks For Geeks}
+Data Structures and Algorithms \\
+
+
+\sectionsep
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%     COLUMN TWO
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.66\textwidth}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     EXPERIENCE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Experience}
+\runsubsection{Infosys}
+\descript{| Specialist Programmer (SDE 1) }
+\location{Jan 2022 - Present | Hyderabad, India}
+\vspace{\topsep} % Hacky fix for awkward extra vertical space
+\begin{tightemize}
+\item Spearheaded the development and maintenance of a new
+micro-service for Exception-Mapping from scratch, enabling
+Store Planner to perform efficient inventory mappings from
+the distribution centres to Active GAP stores.
+\item Implemented streamlined bulk updates in the SPM service by
+designing and constructing efficient logic, reducing total
+processing time by 50%.
+\item Contributed to the optimization and bug-fixing efforts of
+the New-Store Management Service while also developing
+and integrating various new endpoints to enhance its
+functionality.
+\end{tightemize}
+\sectionsep
+
+\runsubsection{Infosys}
+\descript{| Digital Specialist Engineer }
+\location{Nov 2020 - Jan 2022 | Hyderabad, India}
+\vspace{\topsep} % Hacky fix for awkward extra vertical space
+\begin{tightemize}
+\item Maintained critical backend services for SPM and New-Store, ensuring they meet the high standards and requirements of
+Store Planners and the client.
+\item Developed new endpoints and increased test coverage by
+15\% for both JUnit and Integration test cases in SPM and NS.
+\end{tightemize}
+\sectionsep
+
+
+\runsubsection{Rootsapp}
+\descript{| Software Developer Intern }
+\location{Jun 2018 – Dec 2018 | Meerut, UP, India}
+\begin{tightemize}
+\item Built a Smart Student Attendance System using AWS Rekognition Kit, allowing attendance to be taken for an entire class with a single photo click.
+\item Designed and developed the Android application module and AWS Lambda function, playing a major role in the system's development.
+\item Utilized a tech stack consisting of Java, Android, AWS Lambda, AWS API Gateway, and AWS RDS to develop the system.
+
+\end{tightemize}
+\sectionsep
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     PROJECTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{PROJECTS}
+\runsubsection{Denphy - Wallpaper App}
+\descript{| \href{https://github.com/atul-chaudhary/flutter_wallpaper_app/}{\bf Link}}
+\begin{tightemize}
+\item Developed a high-quality Wallpaper Application using Flutter, and uses Firebase for backend and storing the wallpapers.
+\item Designed to simplify the process of finding and setting wallpapers and backgrounds on both home and lock screens, allowing users to easily access and use images from a variety of genres.
+
+\end{tightemize}
+\sectionsep
+
+\runsubsection{R.E.D-Blood Donation App}
+\descript{| \href{https://github.com/atul-chaudhary/R.E.D-BloodDonationApp}{\bf Link}}
+\begin{tightemize}
+\item Developed the RED-Blood Donation App as part of the Smart
+MIET Hackathon at the college level, with the aim of creating a
+reliable platform connecting blood donors and those in need.
+\item Implemented a user-friendly interface that enables donors to
+easily view nearby donation requests, while allowing those in
+need to quickly request assistance from donors in their area.
+\end{tightemize}
+\sectionsep
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     ACHIEVEMENTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{ACHIEVEMENTS}
+\textbullet{} Solved 500+ DSA questions on Leetcode and GeekforGeeks.  \\
+\textbullet{} Mentored new GAP joiners as part of the Store Planning Team. \\
+\textbullet{} Placed third in the Smart MIET Hackathon by developing a blood
+donation app in just 24 hours.
+
+\end{minipage}
+\end{document}  \documentclass[]{article}
