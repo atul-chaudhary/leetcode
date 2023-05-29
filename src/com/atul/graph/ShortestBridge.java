@@ -1,15 +1,78 @@
 package com.atul.graph;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
+
 
 public class ShortestBridge {
     public static void main(String[] args) {
-        int[][] nums = {{0, 1, 0, 0, 0}, {0, 1, 0, 1, 1}, {0, 0, 0, 0, 1}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}};
-        //{{1, 1, 1, 1, 1}, {1, 0, 0, 0, 1}, {1, 0, 1, 0, 1}, {1, 0, 0, 0, 1}, {1, 1, 1, 1, 1}};
-        System.out.println(shortestBridge(nums));
+        int[] nums = {3,2,3};
+        System.out.println(majorityElement(nums));
+    }
 
+    public static int majorityElement(int[] nums) {
+        int n = nums.length;
+        Map<Integer, Integer> map = new HashMap<>();
+        for(int it : nums){
+            map.put(it, map.getOrDefault(it, 0)+1);
+        }
+        int num = n/2;
+        System.out.println(map);
+        for (Map.Entry<Integer,Integer> entry : map.entrySet()){
+            int val = entry.getValue();
+            if(val > num){
+                return entry.getKey();
+            }
+        }
+        return -1;
+    }
+
+    public static int solution(int[] blocks) {
+        // Implement your solution here
+        //[1,5,5,2,6]
+        //create two array
+        //1. first array  will store how far to right we can
+        //[3,2, 2, 1]
+
+        //actual - copy - [1,5,5,2,6] using stack approach
+        //[2,2,2,4,4]
+        //1. seocod array  will store how far to right we can
+        //[0,1,1,1,4]
+
+        //(n) + (n) +(n) = (3n)
+
+
+        int n = blocks.length;
+        Stack<Integer> right = new Stack<>();
+        int[] rightIndex = new int[n];
+        //[3,2, 2, 1]
+        for (int i = 0; i < n; i++) {
+            right.push(i);
+            int index = i + 1;
+            while (index < n && blocks[right.peek()] <= blocks[index]) {
+                right.push(index);
+                index++;
+            }
+            rightIndex[i] = right.peek();
+        }
+        System.out.println(Arrays.toString(rightIndex));
+        Stack<Integer> left = new Stack<>();
+        int[] leftIndex = new int[n];
+        for (int i = n - 1; i >= 0; i--) {
+            left.push(i);
+            int index = i - 1;
+            while (index >= 0 && blocks[left.peek()] <= blocks[index]) {
+                left.push(index);
+                index--;
+            }
+            leftIndex[i] = left.peek();
+        }
+        System.out.println(Arrays.toString(leftIndex));
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < n; i++) {
+            int tempCal = rightIndex[i] - leftIndex[i] + 1;
+            max = Math.max(max, tempCal);
+        }
+        return max;
     }
 
     public static int shortestBridge(int[][] grid) {
