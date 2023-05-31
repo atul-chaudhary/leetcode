@@ -8,6 +8,35 @@ public class Contest28_05_2023 {
         System.out.println(removeTrailingZeros(str));
     }
 
+    int one;
+    int two;
+    int three;
+    public void ParkingSystem(int big, int medium, int small) {
+        this.one= big;
+        this.two = medium;
+        this.three = small;
+    }
+
+    public boolean addCar(int carType) {
+        if(carType == 1){
+            if(one > 0){
+                one--;
+                return true;
+            }else return false;
+        }else if(carType == 2){
+            if(two > 0){
+                two--;
+                return true;
+            }else return false;
+        }else {
+            if(three > 0){
+                three--;
+                return true;
+            }else return false;
+
+        }
+    }
+
     public static String removeTrailingZeros(String num) {
         int n = num.length();
         StringBuilder sb = new StringBuilder(num);
