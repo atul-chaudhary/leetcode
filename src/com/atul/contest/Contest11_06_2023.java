@@ -4,9 +4,37 @@ import java.util.*;
 
 public class Contest11_06_2023 {
     public static void main(String[] args) {
-        String str = "fdfdqewdfqwedwqdqwdqwdwq1123456789";
-        System.out.println(equalPairs(str));
-        System.out.println(Integer.MAX_VALUE);
+        String str = "aa";
+        System.out.println(smallestString(str));
+    }
+
+    public static String smallestString(String s) {
+        int n = s.length();
+
+        if (n == 1) {
+            if (s.charAt(0) == 'a') {
+                return String.valueOf('z');
+            }
+            int prev = s.charAt(0) - 1;
+            return String.valueOf((char) prev);
+        }
+        StringBuilder sb = new StringBuilder(s);
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            if (s.charAt(i) == 'a') {
+                if (count >= 1) {
+                    break;
+                }
+                continue;
+            }
+            count++;
+            int prev = s.charAt(i) - 1;
+            sb.replace(i, i + 1, String.valueOf((char) prev));
+        }
+        if(count == 0){
+            return sb.replace(n-1, n, String.valueOf('z')).toString();
+        }
+        return sb.toString();
     }
 
     public static long equalPairs(String str) {
