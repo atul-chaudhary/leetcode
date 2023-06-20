@@ -5,8 +5,107 @@ import java.util.*;
 
 public class Contest18_06_2023 {
     public static void main(String[] args) {
-        long[] nums = {12, -1, -7, 8, -15, 30, 16, 28};
-        System.out.println(Arrays.toString(printFirstNegativeInteger(nums, nums.length, 3)));
+        System.out.println(solve(24, 16));
+    }
+
+    public static int lenOfLongSubarr(int A[], int N, int K) {
+        //Complete the function
+        int count = 0;
+        int sum = 0;
+        int ans = 0;
+        int index = 0;
+        for (int i = 0; i < N; i++) {
+            count++;
+            sum += A[i];
+            if (sum == K) {
+                ans = Math.max(ans, count);
+            }
+            while (sum > K) {
+                count--;
+                sum -= A[index++];
+            }
+        }
+        return ans;
+    }
+
+
+    public static int solve(int X, int Y) {
+        if (X == Y) {
+            return 0;
+        }
+
+        Queue<Pair> queue = new ArrayDeque<>();
+        Set<Integer> visited = new HashSet<>();
+        queue.offer(new Pair(X, 0));
+        visited.add(X);
+
+        while (!queue.isEmpty()) {
+            Pair current = queue.poll();
+            int currentNum = current.getNumber();
+            int steps = current.getSteps();
+
+            // Multiply by 2 operation
+            int nextNum = currentNum * 2;
+            if (nextNum == Y) {
+                return steps + 1;
+            } else if (nextNum < Y && !visited.contains(nextNum)) {
+                queue.offer(new Pair(nextNum, steps + 1));
+                visited.add(nextNum);
+            }
+
+            // Divide by 2 operation
+            if (currentNum % 2 == 0) {
+                nextNum = currentNum / 2;
+                if (nextNum == Y) {
+                    return steps + 1;
+                } else if (!visited.contains(nextNum)) {
+                    queue.offer(new Pair(nextNum, steps + 1));
+                    visited.add(nextNum);
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    static class Pair {
+        private int number;
+        private int steps;
+
+        public Pair(int number, int steps) {
+            this.number = number;
+            this.steps = steps;
+        }
+
+        public int getNumber() {
+            return number;
+        }
+
+        public int getSteps() {
+            return steps;
+        }
+    }
+
+    static ArrayList<Integer> max_of_subarrays(int arr[], int n, int k) {
+        ArrayList<Integer> result = new ArrayList<>();
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            count++;
+            map.put(arr[i], map.getOrDefault(arr[i], 0) + 1);
+
+            if (count == k) {
+                count--;
+                int max = map.lastKey();
+                result.add(max);
+                int item = arr[i - k + 1];
+                map.put(item, map.get(item) - 1);
+                if (map.get(item) == 0) {
+                    map.remove(item);
+                }
+            }
+        }
+        return result;
     }
 
     public static long[] printFirstNegativeInteger(long A[], int N, int K) {
