@@ -5,27 +5,54 @@ import java.util.*;
 
 public class Contest18_06_2023 {
     public static void main(String[] args) {
-        System.out.println(solve(24, 16));
+        String str = "meayl";
+        System.out.println(longestkSubstr(str, 2));
+    }
+
+    public static int longestkSubstr(String s, int k) {
+        // code here
+        int n = s.length();
+        int first = 0;
+        int second = 0;
+        int count = -1;
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            char ch = s.charAt(i);
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+
+            if (map.size() == k) {
+                count = Math.max(count, second - first + 1);
+            }
+
+            while (map.size() > k) {
+                char it = s.charAt(first);
+                map.put(it, map.get(it) - 1);
+                if (map.get(it) == 0) {
+                    map.remove(it);
+                }
+                first++;
+            }
+
+            second++;
+        }
+        return count;
     }
 
     public static int lenOfLongSubarr(int A[], int N, int K) {
         //Complete the function
-        int count = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, -1);
         int sum = 0;
-        int ans = 0;
-        int index = 0;
+        int count = 0;
         for (int i = 0; i < N; i++) {
-            count++;
             sum += A[i];
-            if (sum == K) {
-                ans = Math.max(ans, count);
+            if (map.containsKey(sum - K)) {
+                int curlen = i - map.get(sum - K);
+                count = Math.max(count, curlen);
             }
-            while (sum > K) {
-                count--;
-                sum -= A[index++];
-            }
+            map.put(sum, i);
         }
-        return ans;
+        return count;
     }
 
 
