@@ -1,14 +1,16 @@
 package com.atul.contest;
 
-
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Contest25_06_2023 {
     public static void main(String[] args) {
         int[] post = {3, 5, 2, 6};
         int[] health = {10, 10, 15, 12};
         String dir = "RL";
-        System.out.println(survivedRobotsHealths(post, health, dir));
+        String str = Stream.of(dir.split("")).reduce("", (a, b) -> b + a);
+        System.out.println(str);
+        //System.out.println(survivedRobotsHealths(post, health, dir));
     }
 
     static class Tuple {

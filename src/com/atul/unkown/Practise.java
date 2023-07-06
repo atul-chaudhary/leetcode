@@ -13,6 +13,78 @@ public class Practise {
     }
 
 
+
+    static int finalAns = Integer.MIN_VALUE;
+
+    public int distributeCookies(int[] cookies, int k) {
+        int[] kids = new int[k];
+        solve(0, kids, cookies);
+        return finalAns;
+    }
+
+    private static void solve(int index, int[] kids, int[] cook) {
+        if (index == cook.length) {
+            int max = Integer.MIN_VALUE;
+            for (int it : kids) {
+                max = Math.max(max, it);
+            }
+            finalAns = Math.max(finalAns, max);
+            return;
+        }
+
+        for (int i = 0; i < kids.length; i++) {
+            kids[i] += cook[index];
+            solve(index + 1, kids, cook);
+            kids[i] -= cook[index];
+        }
+    }
+
+    static class PairT {
+        int j;
+        double prob;
+
+        public PairT(int j, double prob) {
+            this.j = j;
+            this.prob = prob;
+        }
+    }
+
+    public double maxProbability(int n, int[][] edges, double[] succProb, int start, int end) {
+        List<List<PairT>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        for (int i = 0; i < n; i++) {
+            int[] edge = edges[i];
+            int x = edge[0];
+            int y = edge[1];
+            double prob = succProb[i];
+
+            adj.get(x).add(new PairT(y, prob));
+            adj.get(y).add(new PairT(x, prob));
+        }
+
+        boolean[] vis = new boolean[n];
+
+        Queue<PairT> pq = new PriorityQueue<>((a, b) -> (int) (b.prob - a.prob));
+        pq.offer(new PairT(start, 1));
+
+        double result = Integer.MIN_VALUE;
+        while (!pq.isEmpty()) {
+            PairT node = pq.poll();
+            if (node.j == end) result = Math.max(result, node.prob);
+            vis[node.j] = true;
+            for (PairT it : adj.get(node.j)) {
+                if (vis[it.j] == false) {
+                    pq.offer(new PairT(it.j, node.prob * it.prob));
+                }
+            }
+        }
+
+        return result == Integer.MIN_VALUE ? 0 : result;
+    }
+
     static int binarysearch(int arr[], int n, int k) {
         // code here
         int first = 0;
