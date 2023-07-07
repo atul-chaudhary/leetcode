@@ -4,16 +4,165 @@ import java.util.*;
 
 public class Contest02_07_2023 {
     public static void main(String[] args) {
-        long[] nums = {1, 3, 5, 5, 5, 5, 14, 65};
-        //System.out.println(searchInSorted(nums, nums.length, 5));
-        System.out.println(find(nums, nums.length, 5));
+        char[] chars = {'a', 'b', 'c', 'd', 'f' };
+        System.out.println(findNext(chars, 'e'));
     }
+
+    private static char findNext(char[] chars, char key) {
+        int n = chars.length;
+        int first = 0;
+        int last = n - 1;
+        int next = -1;
+        while (first <= last) {
+            int mid = first + (last - first) / 2;
+            if (chars[mid] == key) {
+                if (mid + 1 < n) return chars[mid + 1];
+                return '@';
+            } else if (chars[mid] < key) {
+                first = mid + 1;
+            } else {
+                last = mid - 1;
+                next = mid;
+            }
+        }
+        System.out.println(next+"<<>>"+chars[next]);
+        return '@';
+    }
+
+    static int findFloor(long arr[], int n, long x) {
+        int first = 0;
+        int last = n - 1;
+        int floor = -1;
+        int ceil = -1;
+        while (first <= last) {
+            int mid = first + (last - first) / 2;
+            if (arr[mid] == x) {
+                return mid;
+            } else if (arr[mid] < x) {
+                first = mid + 1;
+                floor = mid;
+            } else {
+                last = mid - 1;
+                ceil = mid;
+            }
+        }
+
+        return 0;
+        //return new Pair(floor, ceil);
+    }
+
+
+    static int search(int nums[], int l, int h, int key) {
+        int n = nums.length;
+        int first = 0;
+        int last = n - 1;
+        int minIndex = findMinIndex(nums);
+        System.out.println(minIndex);
+        if (key >= nums[minIndex] && key <= nums[last]) {
+            return binarySearch(nums, minIndex, last, key);
+        }
+        return binarySearch(nums, first, minIndex - 1, key);
+    }
+
+    private static int findMinIndex(int[] nums) {
+        int n = nums.length;
+        int first = 0;
+        int last = n - 1;
+        while (first <= last) {
+            int mid = first + (last - first) / 2;
+            int prev = (mid - 1 + n) % n;
+            int next = (mid + 1) % n;
+            if (nums[mid] < nums[prev] && nums[mid] < nums[next]) {
+                return mid;
+            } else if (nums[mid] < nums[last]) {
+                last = mid - 1;
+            } else {
+                first = mid + 1;
+            }
+        }
+        return 0;
+    }
+
+    private static int binarySearch(int[] nums, int first, int last, int key) {
+        while (first <= last) {
+            int mid = first + (last - first) / 2;
+            if (nums[mid] == key) {
+                return mid;
+            } else if (nums[mid] < key) {
+                first = mid + 1;
+            } else {
+                last = mid - 1;
+            }
+        }
+        return -1;
+    }
+
+    private static int solve(int[] nums) {
+        int n = nums.length;
+        int first = 0;
+        int last = n - 1;
+        if (nums[first] < nums[last]) {
+            return first;
+        }
+        int index = -1;
+        while (first <= last) {
+            int mid = first + (last - first) / 2;
+            int prev = (mid + n - 1) % n;
+            int next = (mid + 1) % n;
+            if (nums[prev] > nums[mid] && nums[mid] < nums[next]) {
+                return mid;
+            } else if (nums[mid] < nums[first]) {
+                last = mid - 1;
+            } else {
+                first = mid + 1;
+            }
+        }
+        return index;
+    }
+
+    static int count(int[] arr, int n, int x) {
+        // code here
+        boolean isPresent = false;
+        int first = 0;
+        int last = n - 1;
+        int lastIndex = -1;
+        while (first <= last) {
+            int mid = first + (last - first) / 2;
+            if (arr[mid] == x) {
+                isPresent = true;
+                lastIndex = mid;
+                first = mid + 1;
+            } else if (arr[mid] < x) {
+                first = mid + 1;
+            } else {
+                last = mid - 1;
+            }
+        }
+
+        first = 0;
+        last = (int) lastIndex;
+        int firstIndex = -1;
+        while (first <= last) {
+            int mid = first + (last - first) / 2;
+            if (arr[mid] == x) {
+                firstIndex = mid;
+                last = mid - 1;
+            } else if (arr[mid] < x) {
+                first = mid + 1;
+            } else {
+                last = mid - 1;
+            }
+        }
+
+        return isPresent == false ? 0 : lastIndex - firstIndex + 1;
+    }
+
 
     static ArrayList<Long> find(long arr[], int n, int x) {
         // code here
         int first = 0;
         int last = n - 1;
-        int index = -1;
+        long index = -1;
         while (first <= last) {
             int mid = first + (last - first) / 2;
             if (arr[mid] == x) {
@@ -25,8 +174,25 @@ public class Contest02_07_2023 {
                 last = mid - 1;
             }
         }
-        System.out.println(index);
-        return null;
+
+        first = 0;
+        last = (int) index;
+        long second = -1;
+        while (first <= last) {
+            int mid = first + (last - first) / 2;
+            if (arr[mid] == x) {
+                second = mid;
+                last = mid - 1;
+            } else if (arr[mid] < x) {
+                first = mid + 1;
+            } else {
+                last = mid - 1;
+            }
+        }
+        ArrayList<Long> result = new ArrayList<>();
+        result.add(second);
+        result.add(index);
+        return result;
     }
 
     static int searchInSorted(int arr[], int N, int K) {
