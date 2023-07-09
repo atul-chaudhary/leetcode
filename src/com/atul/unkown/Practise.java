@@ -13,6 +13,149 @@ public class Practise {
     }
 
 
+    class Node {
+        int data;
+        Node left, right;
+
+        public Node(int data) {
+            this.data = data;
+        }
+    }
+
+    int findMaxSum(Node node) {
+        //your code goes here
+        int[] count = new int[1];
+        count[0] = Integer.MIN_VALUE;
+        return path(node, count);
+    }
+
+    private static int path(Node root, int[] count) {
+        if (root == null) {
+            return 0;
+        }
+
+        int left = root.data + path(root.left, count);
+        int right = root.data + path(root.right, count);
+        count[0] = Math.max(count[0], left + right + root.data);
+        return Math.max(left, right);
+    }
+
+    int diameter(Node root) {
+        // Your code here
+        int[] count = new int[1];
+        count[0] = Integer.MIN_VALUE;
+        width(root, count);
+        return count[0];
+    }
+
+    private static int width(Node root, int[] max) {
+        if (root == null) return 0;
+
+        int left = width(root.left, max);
+        int right = width(root.right, max);
+
+        max[0] = Math.max(max[0], left + right);
+        return 1 + Math.max(left, right);
+    }
+
+    boolean isBalanced(Node root) {
+        // Your code here
+        int result = solveHeight(root);
+        if (result == -1) return false;
+        return true;
+    }
+
+    private static int solveHeight(Node root) {
+        if (root == null) {
+            return 0;
+        }
+
+        int left = solveHeight(root.left);
+        if (left == -1) {
+            return -1;
+        }
+
+        int right = solveHeight(root.right);
+        if (right == -1) {
+            return -1;
+        }
+
+        if (Math.abs(left - right) > 1) return -1;
+
+        return Math.max(left, right) + 1;
+    }
+
+    public static int maxDepth(Node root) {
+        // code here
+        return solve(root);
+    }
+
+    private static int solve(Node root) {
+        if (root == null) return 0;
+        int left = 1 + solve(root.left);
+        int right = 1 + solve(root.right);
+
+        return Math.max(left, right);
+    }
+
+    static ArrayList<Integer> levelOrder(Node node) {
+        // Your code here
+        if (node == null) return null;
+        Queue<Node> pq = new LinkedList<>();
+        pq.offer(node);
+        ArrayList<Integer> result = new ArrayList<>();
+        while (!pq.isEmpty()) {
+            int size = pq.size();
+            for (int i = 0; i < size; i++) {
+                Node temp = pq.poll();
+                result.add(temp.data);
+                if (temp.left != null) {
+                    pq.offer(temp.left);
+                }
+
+                if (temp.right != null) {
+                    pq.offer(temp.right);
+                }
+            }
+        }
+        return result;
+    }
+
+    ArrayList<Integer> inOrder(Node root) {
+        // Code
+        ArrayList<Integer> trav = new ArrayList<>();
+        solve(root, trav);
+        return trav;
+    }
+
+    private static void solvePostOrder(Node root, ArrayList<Integer> trav) {
+        if (root == null) return;
+        solvePostOrder(root.left, trav);
+        solvePostOrder(root.right, trav);
+        trav.add(root.data);
+    }
+
+    private static void solveInorder(Node root, ArrayList<Integer> trav) {
+        if (root == null) return;
+        solve(root.left, trav);
+        trav.add(root.data);
+        solve(root.right, trav);
+    }
+
+    static ArrayList<Integer> preorder(Node root) {
+        // Code here
+        ArrayList<Integer> trav = new ArrayList<>();
+        solve(root, trav);
+        return trav;
+    }
+
+    private static void solve(Node root, ArrayList<Integer> trav) {
+        if (root == null) return;
+        trav.add(root.data);
+        solve(root.left, trav);
+        solve(root.right, trav);
+    }
+
 
     static int finalAns = Integer.MIN_VALUE;
 
