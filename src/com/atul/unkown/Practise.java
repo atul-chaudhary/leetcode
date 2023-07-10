@@ -7,13 +7,34 @@ import java.util.Queue;
 
 public class Practise {
     public static void main(String[] args) {
-        int[] nums = {11, 22, 33, 44, 55};
-        //System.out.println(sumBetweenTwoKth(nums, 7, 3, 6));
-        System.out.println(binarysearch(nums, nums.length, 44));
+        Node node = new Node(1);
+        node.left = new Node(2);
+        node.left.left = new Node(4);
+        node.left.right = new Node(5);
+
+
+        node.right = new Node(3);
+        node.right.left = new Node(6);
+        node.right.left.right = new Node(8);
+        node.right.right = new Node(7);
+        node.right.right.right = new Node(9);
+        System.out.println(verticalOrder(node));
     }
 
 
-    class Node {
+    static class Tuple {
+        int left;
+        int right;
+        Node node;
+
+        public Tuple(int left, int right, Node node) {
+            this.left = left;
+            this.right = right;
+            this.node = node;
+        }
+    }
+
+    static class Node {
         int data;
         Node left, right;
 
@@ -21,6 +42,146 @@ public class Practise {
             this.data = data;
         }
     }
+
+
+
+    static ArrayList<Integer> verticalOrder(Node root) {
+        // add your code here
+        Map<Integer, Map<Integer, List<Integer>>> map = new TreeMap<>();
+        ArrayList<Integer> result = new ArrayList<>();
+        Queue<Tuple> pq = new LinkedList<>();
+        pq.offer(new Tuple(0, 0, root));
+        while (!pq.isEmpty()) {
+            Tuple temp = pq.poll();
+            int x = temp.left;
+            int y = temp.right;
+            Node node = temp.node;
+
+            map.putIfAbsent(x, new TreeMap<>());
+            map.get(x).putIfAbsent(y, new ArrayList<>());
+            map.get(x).get(y).add(node.data);
+
+            if (node.left != null) {
+                pq.offer(new Tuple(x - 1, y + 1, node.left));
+            }
+            if (node.right != null) {
+                pq.offer(new Tuple(x + 1, y + 1, node.right));
+            }
+        }
+
+        for (Map.Entry<Integer, Map<Integer, List<Integer>>> entry : map.entrySet()) {
+            int key = entry.getKey();
+            Map<Integer, List<Integer>> temp = entry.getValue();
+            for (Map.Entry<Integer, List<Integer>> ent : temp.entrySet()) {
+                result.addAll(ent.getValue());
+            }
+        }
+
+        System.out.println(map);
+
+        return result;
+    }
+
+
+    ArrayList<Integer> boundary(Node node) {
+        if (node == null) return new ArrayList<>();
+        ArrayList<Integer> result = new ArrayList<>();
+        if (isLeaf(node) == false)
+            result.add(node.data);
+        addLeft(node.left, result);
+        addLeaveNode(node, result);
+        addRight(node.right, result);
+        return result;
+    }
+
+    private static void addRight(Node root, ArrayList<Integer> list) {
+        Node node = root;
+        ArrayList<Integer> temp = new ArrayList<>();
+        while (node != null) {
+            if (isLeaf(node) == false) temp.add(node.data);
+            if (node.right != null) node = node.right;
+            else node = node.left;
+        }
+        Collections.reverse(temp);
+        list.addAll(temp);
+    }
+
+    private static void addLeaveNode(Node root, ArrayList<Integer> list) {
+        if (root == null) return;
+        addLeaveNode(root.left, list);
+        if (root.left == null && root.right == null) {
+            list.add(root.data);
+        }
+        addLeaveNode(root.right, list);
+    }
+
+    private static void addLeft(Node root, ArrayList<Integer> list) {
+        Node node = root;
+        while (node != null) {
+            if (isLeaf(node) == false) list.add(node.data);
+            if (node.left != null) node = node.left;
+            else node = node.right;
+        }
+    }
+
+    private static boolean isLeaf(Node root) {
+        if (root != null && root.left == null && root.right == null) {
+            return true;
+        }
+        return false;
+    }
+
+    ArrayList<Integer> zigZagTraversal(Node root) {
+        //Add your code here.
+        if (root == null) return new ArrayList<>();
+        ArrayList<Integer> result = new ArrayList<>();
+        Queue<Node> pq = new LinkedList<>();
+        pq.offer(root);
+        boolean dir = true;
+        while (!pq.isEmpty()) {
+            int size = pq.size();
+            List<Integer> temp = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                Node node = pq.poll();
+                temp.add(node.data);
+                if (node.left != null) {
+                    pq.offer(node.left);
+                }
+                if (node.right != null) {
+                    pq.offer(node.right);
+                }
+            }
+            if (dir) {
+                result.addAll(temp);
+                dir = false;
+            } else {
+                Collections.reverse(temp);
+                result.addAll(temp);
+                dir = true;
+            }
+        }
+        return result;
+    }
+
+
+    static boolean isIdentical(Node root1, Node root2) {
+        // Code Here
+        if (root1 == null && root2 == null) return true;
+        if (root1 == null && root2 != null) return false;
+        if (root1 != null && root2 == null) return false;
+        if (root1.left == null && root1.right == null && root2.left == null && root2.right == null) {
+            if (root1.data == root2.data) {
+                return true;
+            }
+            return false;
+        }
+
+
+        boolean left = isIdentical(root1.left, root2.left);
+        boolean right = isIdentical(root1.right, root2.right);
+        return root1.data == root2.data && (left && right);
+    }
+
 
     int findMaxSum(Node node) {
         //your code goes here
