@@ -1,5 +1,6 @@
 package com.atul.unkown;
 
+
 import java.util.*;
 import java.util.Collections;
 import java.util.PriorityQueue;
@@ -8,17 +9,14 @@ import java.util.Queue;
 public class Practise {
     public static void main(String[] args) {
         Node node = new Node(1);
-        node.left = new Node(2);
-        node.left.left = new Node(4);
-        node.left.right = new Node(5);
+        node.left = new Node(7);
+        node.left.left = new Node(9);
+        node.left.left.left = new Node(11);
 
-
-        node.right = new Node(3);
-        node.right.left = new Node(6);
-        node.right.left.right = new Node(8);
+        node.right = new Node(10);
         node.right.right = new Node(7);
-        node.right.right.right = new Node(9);
-        System.out.println(verticalOrder(node));
+        node.right.right.right = new Node(10);
+        System.out.println(getMaxWidth(node));
     }
 
 
@@ -43,6 +41,251 @@ public class Practise {
         }
     }
 
+    static class Pair2 {
+        Node node;
+        int val;
+
+        public Pair2(Node node, int val) {
+            this.node = node;
+            this.val = val;
+        }
+    }
+
+    static int getMaxWidth(Node root) {
+        // Your code here
+        if (root == null) return 0;
+        Queue<Pair2> pq = new LinkedList<>();
+        pq.offer(new Pair2(root, 1));
+        int result = Integer.MIN_VALUE;
+        while (!pq.isEmpty()) {
+            int size = pq.size();
+            int first = 0;
+            int last = 0;
+            for (int i = 0; i < size; i++) {
+                Pair2 pair2 = pq.poll();
+                Node temp = pair2.node;
+                if (i == 0) {
+                    first = pair2.val;
+                }
+
+                if (i == size - 1) {
+                    last = pair2.val;
+                }
+                int val = pair2.val;
+                if (temp.left != null) {
+                    pq.offer(new Pair2(temp.left, val * 2));
+                }
+
+                if (temp.right != null) {
+                    pq.offer(new Pair2(temp.right, val * 2 + 1));
+                }
+            }
+            result = Math.max(result, last-first+1);
+        }
+        return result;
+    }
+
+
+    Node lca(Node root, int n1, int n2) {
+        // Your code here
+        if (root == null || root.data == n1 || root.data == n2) {
+            return root;
+        }
+
+        Node left = lca(root.left, n1, n2);
+        Node right = lca(root.right, n1, n2);
+
+        if (left == null) {
+            return right;
+        } else if (right == null) {
+            return left;
+        }
+        return root;
+    }
+
+    public static ArrayList<ArrayList<Integer>> Paths(Node root) {
+        // Code here
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        paths(root, result, new ArrayList<>());
+        //printRootToLeafPaths(root, new ArrayDeque<>(), result);
+        return result;
+    }
+
+    private static void paths(Node root, ArrayList<ArrayList<Integer>> result, List<Integer> list) {
+        if (root == null) return;
+
+        list.add(root.data);
+        if (root.left == null && root.right == null) {
+            result.add(new ArrayList<>(list));
+            //return;
+        }
+        paths(root.left, result, list);
+        paths(root.right, result, list);
+        if (!list.isEmpty())
+            list.remove(list.size() - 1);
+    }
+
+    public static void printRootToLeafPaths(Node node, Deque<Integer> path, ArrayList<ArrayList<Integer>> result) {
+        if (node == null) {
+            return;
+        }
+
+        path.addLast(node.data);
+        if (isLeaf(node)) {
+            //System.out.println(path);
+            result.add(new ArrayList<>(path));
+            //return;
+        }
+
+        printRootToLeafPaths(node.left, path, result);
+        printRootToLeafPaths(node.right, path, result);
+        path.removeLast();
+    }
+
+    public static boolean isSymmetric(Node root) {
+        // add your code here;
+        return sym(root.left, root.right);
+    }
+
+    private static boolean sym(Node root1, Node root2) {
+        if (root1 == null && root2 == null) return true;
+        if (root1 != null && root2 == null) return false;
+        if (root1 == null && root2 != null) return false;
+        if (root1.data != root2.data) return false;
+
+        return sym(root1.left, root2.left) && sym(root1.right, root2.right);
+    }
+
+    static ArrayList<Integer> rightView(Node root) {
+        //add code here.
+        if (root == null) return new ArrayList<>();
+        Map<Integer, Integer> map = new TreeMap<>();
+        Queue<Tuple> pq = new LinkedList<>();
+        pq.offer(new Tuple(0, 0, root));
+        while (!pq.isEmpty()) {
+            Tuple temp = pq.poll();
+            int x = temp.left;
+            int y = temp.right;
+            Node node = temp.node;
+
+            if (!map.containsKey(y)) {
+                map.put(y, node.data);
+            }
+
+            if (node.right != null) {
+                pq.offer(new Tuple(x + 1, y + 1, node.right));
+            }
+            if (node.left != null) {
+                pq.offer(new Tuple(x - 1, y + 1, node.left));
+            }
+
+        }
+        //System.out.println(map);
+        ArrayList<Integer> result = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            result.add(entry.getValue());
+        }
+        return result;
+    }
+
+
+    static ArrayList<Integer> leftView(Node root) {
+        //add code here.
+        if (root == null) return new ArrayList<>();
+        Map<Integer, Integer> map = new TreeMap<>();
+        Queue<Tuple> pq = new LinkedList<>();
+        pq.offer(new Tuple(0, 0, root));
+        while (!pq.isEmpty()) {
+            Tuple temp = pq.poll();
+            int x = temp.left;
+            int y = temp.right;
+            Node node = temp.node;
+
+            if (!map.containsKey(y)) {
+                map.put(y, node.data);
+            }
+
+            if (node.left != null) {
+                pq.offer(new Tuple(x - 1, y + 1, node.left));
+            }
+            if (node.right != null) {
+                pq.offer(new Tuple(x + 1, y + 1, node.right));
+            }
+        }
+        System.out.println(map);
+        ArrayList<Integer> result = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            result.add(entry.getValue());
+        }
+        return result;
+    }
+
+    public static ArrayList<Integer> bottomView(Node root) {
+        // Code here
+        if (root == null) return new ArrayList<>();
+        Map<Integer, TreeMap<Integer, List<Integer>>> map = new TreeMap<>();
+        Queue<Tuple> pq = new LinkedList<>();
+        pq.offer(new Tuple(0, 0, root));
+        while (!pq.isEmpty()) {
+            Tuple temp = pq.poll();
+            int x = temp.left;
+            int y = temp.right;
+            Node node = temp.node;
+
+            map.putIfAbsent(x, new TreeMap<>());
+            map.get(x).putIfAbsent(y, new ArrayList<>());
+            map.get(x).get(y).add(node.data);
+
+            if (node.left != null) {
+                pq.offer(new Tuple(x - 1, y + 1, node.left));
+            }
+            if (node.right != null) {
+                pq.offer(new Tuple(x + 1, y + 1, node.right));
+            }
+        }
+
+        ArrayList<Integer> result = new ArrayList<>();
+        for (Map.Entry<Integer, TreeMap<Integer, List<Integer>>> entry : map.entrySet()) {
+            int key = entry.getKey();
+            TreeMap<Integer, List<Integer>> temp = entry.getValue();
+            List<Integer> list = temp.lastEntry().getValue();
+            result.add(list.get(list.size() - 1));
+        }
+        return result;
+    }
+
+    static ArrayList<Integer> topView(Node root) {
+        // add your code
+        if (root == null) return new ArrayList<>();
+        Map<Integer, TreeMap<Integer, List<Integer>>> map = new TreeMap<>();
+        Queue<Tuple> pq = new LinkedList<>();
+        pq.offer(new Tuple(0, 0, root));
+        while (!pq.isEmpty()) {
+            Tuple temp = pq.poll();
+            int x = temp.left;
+            int y = temp.right;
+            Node node = temp.node;
+
+            map.putIfAbsent(x, new TreeMap<>());
+            map.get(x).putIfAbsent(y, new ArrayList<>());
+            map.get(x).get(y).add(node.data);
+
+            if (node.left != null) {
+                pq.offer(new Tuple(x - 1, y + 1, node.left));
+            }
+            if (node.right != null) {
+                pq.offer(new Tuple(x + 1, y + 1, node.right));
+            }
+        }
+
+        ArrayList<Integer> result = new ArrayList<>();
+        for (Map.Entry<Integer, TreeMap<Integer, List<Integer>>> entry : map.entrySet()) {
+            int key = entry.getKey();
+            TreeMap<Integer, List<Integer>> temp = entry.getValue();
+            result.add(temp.firstEntry().getValue().get(0));
+        }
+        return result;
+    }
 
 
     static ArrayList<Integer> verticalOrder(Node root) {
