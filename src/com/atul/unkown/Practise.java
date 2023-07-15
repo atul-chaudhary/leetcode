@@ -1,6 +1,7 @@
 package com.atul.unkown;
 
 
+
 import java.util.*;
 import java.util.Collections;
 import java.util.PriorityQueue;
@@ -8,15 +9,158 @@ import java.util.Queue;
 
 public class Practise {
     public static void main(String[] args) {
-        Node node = new Node(1);
-        node.left = new Node(7);
-        node.left.left = new Node(9);
-        node.left.left.left = new Node(11);
+        Node node = new Node(20);
+        node.left = new Node(8);
+        node.left.left = new Node(4);
+        node.left.right = new Node(12);
+        node.left.right.left = new Node(10);
+        node.left.right.right = new Node(14);
 
-        node.right = new Node(10);
-        node.right.right = new Node(7);
-        node.right.right.right = new Node(10);
-        System.out.println(getMaxWidth(node));
+
+        node.right = new Node(22);
+
+        System.out.println(KDistanceNodes(node, 8, 2));
+    }
+
+    static class Node {
+        int data;
+        Node left, right;
+
+        public Node(int data) {
+            this.data = data;
+        }
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "data=" + data +
+                    '}';
+        }
+    }
+
+    public static Node buildTree(int inorder[], int preorder[], int n)
+    {
+        // code here
+    }
+
+    public static int countNodes(Node root) {
+        // Code here
+        if (root == null) return 0;
+
+        int left = left(root.left);
+        int right = right(root.right);
+
+        if (left == right) return (2 << left - 1);
+
+        return countNodes(root.left) + countNodes(root.right) + 1;
+    }
+
+    private static int left(Node root) {
+        Node node = root;
+        int count = 0;
+        while (node != null) {
+            count++;
+            node = node.left;
+        }
+        return count;
+    }
+
+    private static int right(Node root) {
+        Node node = root;
+        int count = 0;
+        while (node != null) {
+            count++;
+            node = node.right;
+        }
+        return count;
+    }
+
+
+    public static int minTime(Node root, int target) {
+        // Your code goes here
+        if (root == null) return 0;
+        Map<Node, Node> parentMap = new HashMap<>();
+        Node[] count = new Node[1];
+        parent(root, null, parentMap, count, target);
+
+        Set<Node> vis = new HashSet<>();
+
+        int level = 0;
+        Queue<Node> pq = new LinkedList<>();
+        pq.offer(count[0]);
+        vis.add(count[0]);
+        while (!pq.isEmpty()) {
+            int size = pq.size();
+            level++;
+            for (int i = 0; i < size; i++) {
+                Node node = pq.poll();
+                if (node.left != null && !vis.contains(node.left)) {
+                    pq.offer(node.left);
+                    vis.add(node.left);
+                }
+                if (node.right != null && !vis.contains(node.right)) {
+                    pq.offer(node.right);
+                    vis.add(node.right);
+                }
+                if (parentMap.get(node) != null && !vis.contains(parentMap.get(node))) {
+                    pq.offer(parentMap.get(node));
+                    vis.add(parentMap.get(node));
+                }
+            }
+        }
+        return level - 1;
+    }
+
+    public static ArrayList<Integer> KDistanceNodes(Node root, int target, int k) {
+        // return the sorted list of all nodes at k dist'
+        if (root == null) return new ArrayList<>();
+        Map<Node, Node> parentMap = new HashMap<>();
+        Node[] count = new Node[1];
+        parent(root, null, parentMap, count, target);
+
+        //System.out.println(parentMap);
+        Set<Node> vis = new HashSet<>();
+        ArrayList<Integer> result = new ArrayList<>();
+        int level = 0;
+        Queue<Node> pq = new LinkedList<>();
+        pq.offer(count[0]);
+        vis.add(count[0]);
+        while (!pq.isEmpty()) {
+            int size = pq.size();
+            level++;
+            for (int i = 0; i < size; i++) {
+                Node node = pq.poll();
+                if (level == k + 1) {
+                    result.add(node.data);
+                }
+                if (node.left != null && !vis.contains(node.left)) {
+                    pq.offer(node.left);
+                    vis.add(node.left);
+                }
+                if (node.right != null && !vis.contains(node.right)) {
+                    pq.offer(node.right);
+                    vis.add(node.right);
+                }
+                if (parentMap.get(node) != null && !vis.contains(parentMap.get(node))) {
+                    pq.offer(parentMap.get(node));
+                    vis.add(parentMap.get(node));
+                }
+            }
+        }
+        Collections.sort(result);
+        return result;
+    }
+
+    private static void parent(Node node, Node parent, Map<Node, Node> map, Node[] target, int tar) {
+        if (node == null) {
+            return;
+        }
+        parent(node.left, node, map, target, tar);
+        if (node.data == tar) {
+            target[0] = node;
+        }
+        map.put(node, parent);
+        parent(node.right, node, map, target, tar);
     }
 
 
@@ -29,15 +173,6 @@ public class Practise {
             this.left = left;
             this.right = right;
             this.node = node;
-        }
-    }
-
-    static class Node {
-        int data;
-        Node left, right;
-
-        public Node(int data) {
-            this.data = data;
         }
     }
 
@@ -80,7 +215,7 @@ public class Practise {
                     pq.offer(new Pair2(temp.right, val * 2 + 1));
                 }
             }
-            result = Math.max(result, last-first+1);
+            result = Math.max(result, last - first + 1);
         }
         return result;
     }
