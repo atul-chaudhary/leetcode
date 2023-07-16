@@ -1,7 +1,5 @@
 package com.atul.unkown;
 
-
-
 import java.util.*;
 import java.util.Collections;
 import java.util.PriorityQueue;
@@ -9,7 +7,7 @@ import java.util.Queue;
 
 public class Practise {
     public static void main(String[] args) {
-        Node node = new Node(20);
+        /*Node node = new Node(20);
         node.left = new Node(8);
         node.left.left = new Node(4);
         node.left.right = new Node(12);
@@ -20,6 +18,10 @@ public class Practise {
         node.right = new Node(22);
 
         System.out.println(KDistanceNodes(node, 8, 2));
+   */
+        int[] inOrder = {4, 8, 2, 5, 1, 6, 3, 7};
+        int[] postOrder = {8, 4, 5, 2, 6, 7, 3, 1};
+        System.out.println(buildTree(inOrder, postOrder, inOrder.length));
     }
 
     static class Node {
@@ -30,18 +32,31 @@ public class Practise {
             this.data = data;
         }
 
-        @Override
-        public String toString() {
-            return "Node{" +
-                    "data=" + data +
-                    '}';
-        }
     }
 
-    public static Node buildTree(int inorder[], int preorder[], int n)
-    {
+    public static Node buildTree(int inorder[], int postOrder[], int n) {
         // code here
+        Map<Integer, TreeSet<Integer>> inMap = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            inMap.putIfAbsent(inorder[i], new TreeSet<>());
+            inMap.get(inorder[i]).add(i);
+        }
+        return formTreePost(inorder, 0, n - 1, postOrder, 0, n - 1, inMap);
     }
+
+    private static Node formTreePost(int[] inorder, int inStart, int inEnd, int[] postOrder, int postStart, int postEnd, Map<Integer, TreeSet<Integer>> inMap) {
+        if (postStart > postEnd || inStart > inEnd) return null;
+
+        Node node = new Node(postOrder[postEnd]);
+        int idx = inMap.get(node.data).first();
+        inMap.get(node.data).remove(idx);
+        int leftItem = idx - inStart;
+
+        node.left = formTreePost(inorder, inStart, idx - 1, postOrder, postStart, postStart + leftItem - 1, inMap);
+        node.right = formTreePost(inorder, idx + 1, inEnd, postOrder, postStart + leftItem, postEnd - 1, inMap);
+        return node;
+    }
+
 
     public static int countNodes(Node root) {
         // Code here
