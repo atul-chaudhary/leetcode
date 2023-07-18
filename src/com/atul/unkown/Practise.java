@@ -7,21 +7,118 @@ import java.util.Queue;
 
 public class Practise {
     public static void main(String[] args) {
-        /*Node node = new Node(20);
-        node.left = new Node(8);
-        node.left.left = new Node(4);
-        node.left.right = new Node(12);
-        node.left.right.left = new Node(10);
-        node.left.right.right = new Node(14);
+        int[] nums = {5, 2, 6, 4};
+        System.out.println(countPartitions(nums.length, 3, nums));
+    }
 
 
-        node.right = new Node(22);
+    public static int countPartitions(int n, int d, int arr[]) {
+        // Code here
+        // Your code goes here
+        int sum = 0;
+        for (int it : arr) {
+            sum += it;
+        }
+        Integer[][] dp = new Integer[arr.length + 1][sum + 1];
+        return diff(arr, 0, sum, 0, dp, d);
+    }
 
-        System.out.println(KDistanceNodes(node, 8, 2));
-   */
-        int[] inOrder = {4, 8, 2, 5, 1, 6, 3, 7};
-        int[] postOrder = {8, 4, 5, 2, 6, 7, 3, 1};
-        System.out.println(buildTree(inOrder, postOrder, inOrder.length));
+    private static int diff(int[] nums, int index, int totalSum, int sum, Integer[][] dp, int diff) {
+        if (index >= nums.length) {
+            int remain = totalSum - sum;
+            if (remain == diff) {
+                return 1;
+            }
+            return 0;
+        }
+        if (dp[index][sum] != null) return dp[index][sum];
+        int pick = diff(nums, index + 1, totalSum, sum + nums[index], dp, diff) % mod;
+        int notPick = diff(nums, index + 1, totalSum, sum, dp, diff) % mod;
+        return dp[index][sum] = (pick + notPick) % mod;
+    }
+
+
+    public static int minDifference(int arr[], int n) {
+        // Your code goes here
+        int sum = 0;
+        for (int it : arr) {
+            sum += it;
+        }
+        Integer[][] dp = new Integer[arr.length + 1][sum + 1];
+        return 0;//diff(arr, 0, sum, 0, dp, d);
+    }
+
+    public static int perfectSum(int arr[], int n, int sum) {
+        // Your code goes here
+        Integer[][] dp = new Integer[n + 1][sum + 1];
+        return solve(arr, 0, sum, dp);
+    }
+
+    static int mod = (int) 1e9 + 7;
+
+    private static int solve(int[] nums, int index, int sum, Integer[][] dp) {
+        if (sum == 0 && index == nums.length) return 1;
+        if (index >= nums.length) return 0;
+        if (dp[index][sum] != null) return dp[index][sum];
+
+        if (nums[index] <= sum) {
+            int pick = solve(nums, index + 1, sum - nums[index], dp) % mod;
+            int notPick = solve(nums, index + 1, sum, dp) % mod;
+            return dp[index][sum] = (pick + notPick) % mod;
+        } else {
+            return dp[index][sum] = solve(nums, index + 1, sum, dp) % mod;
+        }
+    }
+
+    static int equalPartition(int N, int arr[]) {
+        // code here
+        int sum = 0;
+        for (int it : arr) {
+            sum += it;
+        }
+        if (sum % 2 != 0) return 0;
+        Boolean[][] dp = new Boolean[N + 1][sum + 1];
+        return solve(arr, 0, sum / 2, dp) ? 1 : 0;
+    }
+
+
+    static Boolean isSubsetSum(int N, int arr[], int sum) {
+        // code here
+        Boolean[][] dp = new Boolean[N + 1][sum + 1];
+        return solve(arr, 0, sum, dp);
+    }
+
+    private static boolean solve(int[] nums, int index, int sum, Boolean[][] dp) {
+        if (sum == 0) return true;
+        if (index >= nums.length) return false;
+        if (dp[index][sum] != null) return dp[index][sum];
+
+        if (nums[index] <= sum) {
+            boolean pick = solve(nums, index + 1, sum - nums[index], dp);
+            boolean notPick = solve(nums, index + 1, sum, dp);
+            return dp[index][sum] = pick || notPick;
+        } else {
+            return dp[index][sum] = solve(nums, index + 1, sum, dp);
+        }
+    }
+
+    static int knapSack(int W, int wt[], int val[], int n) {
+        // your code here
+        Integer[][] dp = new Integer[n + 1][W + 1];
+        return knap(val, wt, 0, W, dp);
+    }
+
+    private static int knap(int[] price, int[] weight, int index, int w, Integer[][] dp) {
+        if (index >= price.length) return 0;
+        if (dp[index][w] != null) return dp[index][w];
+
+        if (weight[index] <= w) {
+            int pick = price[index] + knap(price, weight, index + 1, w - weight[index], dp);
+            int notPick = knap(price, weight, index + 1, w, dp);
+            return dp[index][w] = Math.max(pick, notPick);
+        } else {
+            return dp[index][w] = knap(price, weight, index + 1, w, dp);
+        }
     }
 
     static class Node {
