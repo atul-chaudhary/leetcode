@@ -7,28 +7,75 @@ import java.util.Queue;
 
 public class Practise {
     public static void main(String[] args) {
-        int[] nums = {1, 5, 8, 9, 10, 17, 17, 20};
-        System.out.println(cutRod(nums, nums.length));
+        int[] nums = {9, 6, 5, 1};
+        System.out.println(minCoins(nums, nums.length, 11));
+    }
+
+    public static int minCoins(int coins[], int M, int V) {
+        // Your code goes here
+        Integer[][] dp = new Integer[M + 1][V + 1];
+        int result = coin(coins, V, 0, dp);
+        return result == (int) 1e9 ? -1 : result;
+    }
+
+    private static int coin(int[] coin, int v, int index, Integer[][] dp) {
+        if (v == 0) return 0;
+        if (index >= coin.length) return (int) 1e9;
+
+        if (dp[index][v] != null) return dp[index][v];
+
+        int pick = (int) 1e9;
+        if (coin[index] <= v)
+            pick = 1 + coin(coin, v - coin[index], index, dp);
+        int notPick = coin(coin, v, index + 1, dp);
+        return dp[index][v] = Math.min(pick, notPick);
+    }
+
+    public static long count(int coins[], int N, int sum) {
+        // code here.
+        Long[][] dp = new Long[N + 1][sum + 1];
+        return change(coins, sum, 0, dp);
+    }
+
+    private static long change(int[] coin, int sum, int index, Long[][] dp) {
+        if (sum == 0) {
+            return 1;
+        }
+        if (index >= coin.length) {
+            return 0;
+        }
+
+        if (dp[index][sum] != null) return dp[index][sum];
+        long pick = 0;
+        if (coin[index] <= sum)
+            pick = change(coin, sum - coin[index], index, dp);
+        long notPick = change(coin, sum, index + 1, dp);
+        return dp[index][sum] = pick + notPick;
     }
 
     public static int cutRod(int price[], int n) {
         //code here
-        Map<Integer, Integer> dp = new HashMap<>();
-        dp.put(0,0);
-        for (int i = 0; i < n; i++) {
-            dp.put(i + 1, price[i]);
-        }
-        return rod(price, 0, 0, dp, 0);
+        Integer[][] dp = new Integer[n + 1][n + 1];
+        return cutRodUtil(price, price.length - 1, n, dp);
     }
 
-    private static int rod(int[] nums, int index, int prev, Map<Integer, Integer> val, int cur) {
-        if (index >= nums.length) {
-            return cur;
+    static int cutRodUtil(int[] price, int ind, int N, Integer[][] dp) {
+
+        if (ind == 0) {
+            return N * price[0];
         }
 
-        int pick = rod(nums, index + 1, index, val, cur + val.get(index - prev));
-        int notPick = rod(nums, index + 1, prev, val, cur);
-        return Math.max(pick, notPick);
+        if (dp[ind][N] != null)
+            return dp[ind][N];
+
+        int notTaken = 0 + cutRodUtil(price, ind - 1, N, dp);
+
+        int taken = Integer.MIN_VALUE;
+        int rodLength = ind + 1;
+        if (rodLength <= N)
+            taken = price[ind] + cutRodUtil(price, ind, N - rodLength, dp);
+
+        return dp[ind][N] = Math.max(notTaken, taken);
     }
 
     static int knapSack(int N, int W, int val[], int wt[]) {
