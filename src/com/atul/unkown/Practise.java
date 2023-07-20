@@ -7,10 +7,69 @@ import java.util.Queue;
 
 public class Practise {
     public static void main(String[] args) {
-        int[] nums = {5, 2, 6, 4};
-        System.out.println(countPartitions(nums.length, 3, nums));
+        int[] nums = {1, 5, 8, 9, 10, 17, 17, 20};
+        System.out.println(cutRod(nums, nums.length));
     }
 
+    public static int cutRod(int price[], int n) {
+        //code here
+        Map<Integer, Integer> dp = new HashMap<>();
+        dp.put(0,0);
+        for (int i = 0; i < n; i++) {
+            dp.put(i + 1, price[i]);
+        }
+        return rod(price, 0, 0, dp, 0);
+    }
+
+    private static int rod(int[] nums, int index, int prev, Map<Integer, Integer> val, int cur) {
+        if (index >= nums.length) {
+            return cur;
+        }
+
+        int pick = rod(nums, index + 1, index, val, cur + val.get(index - prev));
+        int notPick = rod(nums, index + 1, prev, val, cur);
+        return Math.max(pick, notPick);
+    }
+
+    static int knapSack(int N, int W, int val[], int wt[]) {
+        // code here
+        Integer[][] dp = new Integer[N + 1][W + 1];
+        return knapUn(val, wt, 0, W, dp);
+    }
+
+    private static int knapUn(int[] price, int[] weight, int index, int w, Integer[][] dp) {
+        if (index >= price.length) return 0;
+        if (dp[index][w] != null) return dp[index][w];
+
+        if (weight[index] <= w) {
+            int pick = price[index] + knapUn(price, weight, index, w - weight[index], dp);
+            int notPick = knapUn(price, weight, index + 1, w, dp);
+            return dp[index][w] = Math.max(pick, notPick);
+        } else {
+            return dp[index][w] = knapUn(price, weight, index + 1, w, dp);
+        }
+    }
+
+    static int findTargetSumWays(int[] nums, int n, int target) {
+        // code here
+        //Integer[][] dp = new Integer[n + 1][target + 1];
+        Map<String, Integer> dp = new HashMap<>();
+        return solveTarget(nums, 0, target, 0, dp);
+    }
+
+    private static int solveTarget(int[] nums, int index, int target, int cur, Map<String, Integer> dp) {
+        if (cur == target && index == nums.length) return 1;
+        if (index >= nums.length) return 0;
+
+        String key = index + "|" + cur;
+        if (dp.containsKey(key)) return dp.get(key);
+
+        int add = solveTarget(nums, index + 1, target, cur + nums[index], dp);
+        int sub = solveTarget(nums, index + 1, target, cur - nums[index], dp);
+
+        dp.put(key, add + sub);
+        return add + sub;
+    }
 
     public static int countPartitions(int n, int d, int arr[]) {
         // Code here
@@ -23,10 +82,33 @@ public class Practise {
         return diff(arr, 0, sum, 0, dp, d);
     }
 
+    static int countPartitionsUtil(int ind, int target, int[] arr, int[][] dp) {
+//        if (ind == 0) {
+//            if (target == 0 && arr[0] == 0)
+//                return 2;
+//            if (target == 0 || target == arr[0])
+//                return 1;
+//            return 0;
+//        }
+
+        if (target == 0 && ind == 0) {
+            return 1;
+        }
+
+        if (dp[ind][target] != -1)
+            return dp[ind][target];
+        int notTaken = countPartitionsUtil(ind - 1, target, arr, dp);
+        int taken = 0;
+        if (arr[ind] <= target)
+            taken = countPartitionsUtil(ind - 1, target - arr[ind], arr, dp);
+
+        return dp[ind][target] = (notTaken + taken) % mod;
+    }
+
     private static int diff(int[] nums, int index, int totalSum, int sum, Integer[][] dp, int diff) {
         if (index >= nums.length) {
             int remain = totalSum - sum;
-            if (remain == diff) {
+            if (sum - remain == diff) {
                 return 1;
             }
             return 0;
