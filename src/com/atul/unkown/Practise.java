@@ -7,8 +7,109 @@ import java.util.Queue;
 
 public class Practise {
     public static void main(String[] args) {
-        int[] nums = {9, 6, 5, 1};
-        System.out.println(minCoins(nums, nums.length, 11));
+        String s1 = "axzy";
+        String s2 = new StringBuilder(s1).reverse().toString();
+        System.out.println(searchPattern(s1, s2));
+    }
+
+    public static boolean searchPattern(String str, String pat) {
+        // code here
+        int n = str.length();
+        int m = pat.length();
+        int[][] dp = new int[n + 1][m + 1];
+
+        int len = 0;
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (str.charAt(i - 1) == pat.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                    len = Math.max(len, dp[i][j]);
+                } else {
+                    dp[i][j] = 0;
+                }
+            }
+        }
+        return len == m;
+    }
+
+
+    private static int pattern(String s1, String s2, int i, int j, int cur) {
+        if (i >= s1.length() || j >= s2.length()) return cur;
+
+        if (s1.charAt(i) == s2.charAt(j)) {
+            cur = pattern(s1, s2, i + 1, j + 1, cur + 1);
+        }
+        return Math.max(cur, Math.max(pattern(s1, s2, i + 1, j, 0), pattern(s1, s2, i, j + 1, 0)));
+    }
+
+    public int LongestRepeatingSubsequence(String s1) {
+        // code here
+        int n = s1.length();
+        String s2 = s1;
+        Integer[][] dp = new Integer[n + 1][n + 1];
+        return lcsRE(s1, s2, 0, 0, dp);
+    }
+
+    private static int lcsRE(String s1, String s2, int i, int j, Integer[][] dp) {
+        if (i >= s1.length() || j >= s2.length()) {
+            return 0;
+        }
+        if (dp[i][j] != null) return dp[i][j];
+        if (i != j && s1.charAt(i) == s2.charAt(j)) {
+            return dp[i][j] = 1 + lcsRE(s1, s2, i + 1, j + 1, dp);
+        } else {
+            return dp[i][j] = Math.max(lcsRE(s1, s2, i + 1, j, dp), lcsRE(s1, s2, i, j + 1, dp));
+        }
+    }
+
+
+    public static int longestCommonSubstr(String s1, String s2, int n, int m) {
+        // code here
+        int min = Math.min(n, m);
+        Integer[][][] dp = new Integer[n + 1][m + 1][min + 1];
+        return LongestCommonSubString(s1, s2, n, m, 0, dp);
+    }
+
+
+    public static int LongestCommonSubString(String x, String y, int m, int n, int curr_max, Integer[][][] dp) {
+        if (m == 0 || n == 0) return curr_max;
+
+        if (x.charAt(m - 1) == y.charAt(n - 1))
+            return dp[m][n][curr_max] = LongestCommonSubString(x, y, m - 1, n - 1, curr_max + 1, dp);
+
+        return dp[m][n][curr_max] = Math.max(LongestCommonSubString(x, y, m - 1, n, 0, dp), LongestCommonSubString(x, y, m, n - 1, 0, dp));
+    }
+
+
+    private static int lcsSub(String s1, String s2, int i, int j, Integer[][] dp, int cur, int[] max) {
+        if (i >= s1.length() || j >= s2.length()) {
+            return cur;
+        }
+        if (dp[i][j] != null) return dp[i][j];
+        if (s1.charAt(i) == s2.charAt(j)) {
+            max[0] = lcsSub(s1, s2, i + 1, j + 1, dp, cur + 1, max);
+        }
+        int temp = Math.max(lcsSub(s1, s2, i + 1, j, dp, 0, max), lcsSub(s1, s2, i, j + 1, dp, 0, max));
+        max[0] = Math.max(max[0], temp);
+        return dp[i][j] = max[0];
+    }
+
+    static int lcs(int x, int y, String s1, String s2) {
+        // your code here
+        Integer[][] dp = new Integer[x + 1][y + 1];
+        return lcs(s1, s2, 0, 0, dp);
+    }
+
+    private static int lcs(String s1, String s2, int i, int j, Integer[][] dp) {
+        if (i >= s1.length() || j >= s2.length()) {
+            return 0;
+        }
+        if (dp[i][j] != null) return dp[i][j];
+        if (s1.charAt(i) == s2.charAt(j)) {
+            return dp[i][j] = 1 + lcs(s1, s2, i + 1, j + 1, dp);
+        } else {
+            return dp[i][j] = Math.max(lcs(s1, s2, i + 1, j, dp), lcs(s1, s2, i, j + 1, dp));
+        }
     }
 
     public static int minCoins(int coins[], int M, int V) {
