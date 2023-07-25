@@ -4,8 +4,32 @@ import java.util.*;
 
 public class Contest_22_07_2023 {
     public static void main(String[] args) {
-        int[] nums = {1, 1};
-        System.out.println(isGood(nums));
+        int n = 10;
+        int x = 2;
+        System.out.println(numberOfWays(n, x));
+    }
+
+
+
+    public static int numberOfWays(int n, int x) {
+        return solve(n, x, 1, new HashMap<>());
+    }
+
+    private static int solve(int n, int x, int num, Map<String, Integer> dp) {
+        if (n == 0) return 1;
+        if (n < 0 || Math.pow(num, x) > n) {
+            return 0;
+        }
+
+        String str = n + "|" + num;
+        if (dp.containsKey(str)) return dp.get(str);
+
+        int pick = solve(n - (int) Math.pow(num, x), x, num + 1, dp) % mod;
+        int notPick = solve(n, x, num + 1, dp);
+
+        int result = (pick + notPick) % mod;
+        dp.put(str, result);
+        return result;
     }
 
     public static boolean isGood(int[] nums) {
