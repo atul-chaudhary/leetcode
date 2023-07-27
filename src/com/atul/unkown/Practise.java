@@ -1,15 +1,300 @@
 package com.atul.unkown;
 
 import java.util.*;
-import java.util.Collections;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class Practise {
     public static void main(String[] args) {
-        String s1 = "axzy";
-        String s2 = new StringBuilder(s1).reverse().toString();
-        System.out.println(searchPattern(s1, s2));
+        List<List<Integer>> num = new ArrayList<>();
+        num.add(Arrays.asList(1));
+        num.add(Arrays.asList(0, 2, 4));
+        num.add(Arrays.asList(1, 3));
+        num.add(Arrays.asList(2, 4));
+        num.add(Arrays.asList(1, 3));
+        System.out.println(isCycle(5, num));
+    }
+
+    public static boolean isCycle(int V, List<List<Integer>> adj) {
+        // Code here
+        int[] parent = new int[V];
+        boolean[] vis = new boolean[V];
+        Arrays.fill(parent, -1);
+        for (int i = 0; i < V; i++) {
+            if (vis[i] == false) {
+                if (solveBFS(adj, vis, i)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static class PairTuple {
+        int val;
+        int parent;
+
+        public PairTuple(int val, int parent) {
+            this.val = val;
+            this.parent = parent;
+        }
+    }
+
+    private static boolean solveBFS(List<List<Integer>> adj, boolean[] vis, int node) {
+        Queue<PairTuple> pq = new LinkedList<>();
+        pq.offer(new PairTuple(node, -1));
+        vis[node] = true;
+        while (!pq.isEmpty()) {
+            PairTuple pair = pq.poll();
+            int val = pair.val;
+            int web = pair.parent;
+            for (int it : adj.get(val)) {
+                if (vis[it] == false) {
+                    pq.offer(new PairTuple(it, val));
+                    vis[it] = true;
+                } else if (web != it) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    static class PairRot {
+        int i;
+        int j;
+        int time;
+
+        public PairRot(int i, int j, int time) {
+            this.i = i;
+            this.j = j;
+            this.time = time;
+        }
+
+        @Override
+        public String toString() {
+            return "PairRot{" +
+                    "i=" + i +
+                    ", j=" + j +
+                    ", time=" + time +
+                    '}';
+        }
+    }
+
+    public static int orangesRotting(int[][] grid) {
+        // Code here
+        int n = grid.length;
+        int m = grid[0].length;
+        boolean[][] vis = new boolean[n][m];
+        Queue<PairRot> pq = new LinkedList<>();
+
+        int fresh = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 2) {
+                    pq.offer(new PairRot(i, j, 0));
+                    vis[i][j] = true;
+                } else if (grid[i][j] == 1) {
+                    fresh++;
+                }
+            }
+        }
+
+        if (fresh == 0) return 0;
+        int[] xcor = {1, -1, 0, 0};
+        int[] ycor = {0, 0, 1, -1};
+        int result = Integer.MIN_VALUE;
+        while (!pq.isEmpty()) {
+            PairRot pairRot = pq.poll();
+            int i = pairRot.i;
+            int j = pairRot.j;
+            int time = pairRot.time;
+            result = Math.max(result, time);
+            for (int k = 0; k < 4; k++) {
+                int xtemp = xcor[k] + i;
+                int ytemp = ycor[k] + j;
+                if (check(grid, vis, xtemp, ytemp)) {
+                    pq.offer(new PairRot(xtemp, ytemp, time + 1));
+                    vis[xtemp][ytemp] = true;
+                    grid[xtemp][ytemp] = 2;
+                }
+            }
+        }
+        boolean isFreshFound = false;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 1) {
+                    isFreshFound = true;
+                    break;
+                }
+            }
+        }
+        if (isFreshFound) return -1;
+        else return result;
+    }
+
+    private static boolean check(int[][] grid, boolean[][] vis, int i, int j) {
+        int n = grid.length;
+        int m = grid[0].length;
+        if (i < 0 || i >= n || j < 0 || j >= m || vis[i][j] || grid[i][j] == 0 || grid[i][j] == 2) {
+            return false;
+        }
+        return true;
+    }
+
+    public static int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
+        // Code here
+        int n = image.length;
+        int m = image[0].length;
+        boolean[][] vis = new boolean[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (i == sr && j == sc) {
+                    fill(image, i, j, newColor, vis);
+                }
+            }
+        }
+        return image;
+    }
+
+    private static void fill(int[][] image, int i, int j, int color, boolean[][] vis) {
+        vis[i][j] = true;
+        int currentColor = image[i][j];
+        image[i][j] = color;
+        int[] xcor = {1, -1, 0, 0};
+        int[] ycor = {0, 0, 1, -1};
+        for (int k = 0; k < 4; k++) {
+            int xTemp = xcor[k] + i;
+            int yTemp = ycor[k] + j;
+            if (isValid(image, xTemp, yTemp, vis, currentColor)) {
+                fill(image, xTemp, yTemp, color, vis);
+            }
+        }
+    }
+
+    private static boolean isValid(int[][] grid, int i, int j, boolean[][] vis, int color) {
+        int n = grid.length;
+        int m = grid[0].length;
+        if (i < 0 || i >= n || j < 0 || j >= m || vis[i][j] || grid[i][j] != color) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public static int numIslands(char[][] grid) {
+        // Code here
+        int n = grid.length;
+        int m = grid[0].length;
+        boolean[][] vis = new boolean[n][m];
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == '1' && vis[i][j] == false) {
+                    solveDFS(grid, i, j, vis);
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private static void solveDFSLeetcode(char[][] grid, int i, int j, boolean[][] vis) {
+        vis[i][j] = true;
+        //int[][] cor = {{-1, -1}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}};
+        int[] xcor = {1, -1, 0, 0};
+        int[] ycor = {0, 0, 1, -1};
+        for (int k = 0; k < 4; k++) {
+            int xTemp = xcor[k] + i;
+            int yTemp = ycor[k] + j;
+            if (isValid(grid, xTemp, yTemp, vis)) {
+                solveDFS(grid, xTemp, yTemp, vis);
+            }
+        }
+    }
+
+    private static void solveDFS(char[][] grid, int i, int j, boolean[][] vis) {
+        vis[i][j] = true;
+        int[][] cor = {{-1, -1}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}};
+        for (int k = 0; k < 8; k++) {
+            int xTemp = cor[k][0] + i;
+            int yTemp = cor[k][1] + j;
+            if (isValid(grid, xTemp, yTemp, vis)) {
+                solveDFS(grid, xTemp, yTemp, vis);
+            }
+        }
+    }
+
+    private static boolean isValid(char[][] grid, int i, int j, boolean[][] vis) {
+        int n = grid.length;
+        int m = grid[0].length;
+        if (i < 0 || i >= n || j < 0 || j >= m || vis[i][j] || grid[i][j] == '0') {
+            return false;
+        }
+        return true;
+    }
+
+    static int numProvinces(List<List<Integer>> adj, int V) {
+        // code here
+        boolean[] vis = new boolean[V + 1];
+        int count = 0;
+        for (int i = 0; i < V; i++) {
+            if (vis[i] == false) {
+                dfsAll(adj, i, new ArrayList<>(), vis);
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static void dfsAll(List<List<Integer>> adj, int node, ArrayList<Integer> result, boolean[] vis) {
+        //result.add(node);
+        vis[node] = true;
+        for (int i = 0; i < adj.get(node).size(); i++) {
+            if (adj.get(node).get(i) == 1 && vis[i] == false) {
+                dfsAll(adj, i, result, vis);
+            }
+        }
+    }
+
+    private static void dfs(List<List<Integer>> adj, int node, ArrayList<Integer> result, boolean[] vis) {
+        //result.add(node);
+        vis[node] = true;
+        for (int it : adj.get(node)) {
+            if (adj.get(node).get(it) == 1 && vis[it] == false) {
+                dfs(adj, it, result, vis);
+            }
+        }
+    }
+
+
+    public ArrayList<Integer> bfsOfGraph(int V, ArrayList<ArrayList<Integer>> adj) {
+        // Code here
+        ArrayList<Integer> result = new ArrayList<>();
+        Queue<Integer> pq = new LinkedList<>();
+        pq.offer(0);
+        boolean[] vis = new boolean[V];
+        while (!pq.isEmpty()) {
+            int node = pq.poll();
+            result.add(node);
+            for (int it : adj.get(node)) {
+                if (vis[it] == false) {
+                    pq.offer(it);
+                    vis[it] = true;
+                }
+            }
+        }
+        return result;
+    }
+
+    public static int peakIndexInMountainArray(int[] arr) {
+        int n = arr.length;
+        int index = 0;
+        for (int i = 1; i < n; i++) {
+            if (arr[i] > arr[i - 1]) {
+                index = i;
+            }
+        }
+        return index;
     }
 
     public static boolean searchPattern(String str, String pat) {
