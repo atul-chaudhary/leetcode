@@ -1,16 +1,193 @@
 package com.atul.unkown;
 
+
 import java.util.*;
 
 public class Practise {
     public static void main(String[] args) {
-        List<List<Integer>> num = new ArrayList<>();
-        num.add(Arrays.asList(1));
-        num.add(Arrays.asList(0, 2, 4));
-        num.add(Arrays.asList(1, 3));
-        num.add(Arrays.asList(2, 4));
-        num.add(Arrays.asList(1, 3));
-        System.out.println(isCycle(5, num));
+        int[][] grid = {
+                {1, 1, 0, 0, 0},
+                {1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1},
+                {0, 0, 0, 1, 1}};
+        System.out.println(countDistinctIslands(grid));
+    }
+
+
+
+    static int countDistinctIslands(int[][] grid) {
+        // Your Code here
+        int n = grid.length;
+        int m = grid[0].length;
+        boolean[][] vis = new boolean[n][m];
+        Set<List<String>> set = new HashSet<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (vis[i][j] == false && grid[i][j] == 1) {
+                    List<String> list = new ArrayList<>();
+                    dfs(grid, i, j, list, vis);
+                    set.add(list);
+                }
+            }
+        }
+
+        return set.size();
+    }
+
+    static class Typle {
+        int i;
+        int j;
+        int[] cor;
+
+        public Typle(int i, int j, int[] cor) {
+            this.i = i;
+            this.j = j;
+            this.cor = cor;
+        }
+
+        public Typle(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+    }
+
+    private static void dfs(int[][] grid, int i, int j, List<String> list, boolean[][] vis) {
+        Queue<Typle> pq = new LinkedList<>();
+        pq.offer(new Typle(i, j, new int[]{i, j}));
+        vis[i][j] = true;
+
+        int[] xcor = {1, -1, 0, 0};
+        int[] ycor = {0, 0, 1, -1};
+        while (!pq.isEmpty()) {
+            Typle node = pq.poll();
+            int x = node.i;
+            int y = node.j;
+            int[] cor = node.cor;
+            list.add(toString(cor[0], cor[1], x, y));
+            for (int k = 0; k < 4; k++) {
+                int xtemp = xcor[k] + x;
+                int ytemp = ycor[k] + y;
+                if (normal(grid, xtemp, ytemp) && !vis[xtemp][ytemp] && grid[xtemp][ytemp] == 1) {
+                    pq.offer(new Typle(xtemp, ytemp, new int[]{x, y}));
+                    vis[xtemp][ytemp] = true;
+                }
+            }
+        }
+    }
+
+    protected static String toString(int i, int j, int x, int y) {
+        return (i - x) + "|" + (j - y);
+    }
+
+    static char[][] fill(int n, int m, char[][] grid) {
+        // code here
+        boolean[][] vis = new boolean[n][m];
+        for (int i = 0; i < m; i++) {
+            if (grid[0][i] == 'O') {
+                fil(grid, 0, i, vis);
+            }
+
+            if (grid[n - 1][i] == 'O') {
+                fil(grid, n - 1, i, vis);
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            if (grid[i][0] == 'O') {
+                fil(grid, i, 0, vis);
+            }
+            if (grid[i][m - 1] == 'O') {
+                fil(grid, i, m - 1, vis);
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (!vis[i][j]) {
+                    grid[i][j] = 'X';
+                }
+            }
+        }
+
+        return grid;
+    }
+
+    private static void fil(char[][] grid, int i, int j, boolean[][] vis) {
+        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || vis[i][j]) return;
+        vis[i][j] = true;
+        fil(grid, i, j - 1, vis);
+        fil(grid, i, j + 1, vis);
+        fil(grid, i - 1, j, vis);
+        fil(grid, i + 1, j, vis);
+    }
+
+    static class Dis {
+        int i;
+        int j;
+        int dist;
+
+        public Dis(int i, int j, int dist) {
+            this.i = i;
+            this.j = j;
+            this.dist = dist;
+        }
+    }
+
+    public static int[][] nearest(int[][] grid) {
+        // Code here
+        int n = grid.length;
+        int m = grid[0].length;
+        int[][] temp = new int[n][m];
+
+        Queue<Dis> pq = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 1) {
+                    pq.offer(new Dis(i, j, 0));
+                }
+
+                temp[i][j] = grid[i][j];
+                if (grid[i][j] == 0) {
+                    temp[i][j] = Integer.MAX_VALUE;
+                }
+            }
+        }
+        int[] xcor = {1, -1, 0, 0};
+        int[] ycor = {0, 0, 1, -1};
+
+        while (!pq.isEmpty()) {
+            Dis node = pq.poll();
+            int i = node.i;
+            int j = node.j;
+            int dis = node.dist;
+            temp[i][j] = Math.min(temp[i][j], dis);
+            for (int k = 0; k < 4; k++) {
+                int xtemp = xcor[k] + i;
+                int ytemp = ycor[k] + j;
+                if (normal(grid, xtemp, ytemp) && temp[xtemp][ytemp] > dis + 1) {
+                    pq.offer(new Dis(xtemp, ytemp, dis + 1));
+                    temp[xtemp][ytemp] = dis + 1;
+                }
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 1) {
+                    temp[i][j] = 0;
+                }
+            }
+        }
+        return temp;
+    }
+
+    private static boolean normal(int[][] grid, int i, int j) {
+        int n = grid.length;
+        int m = grid[0].length;
+        if (i < 0 || i >= n || j < 0 || j >= m) {
+            return false;
+        }
+        return true;
     }
 
     public static boolean isCycle(int V, List<List<Integer>> adj) {
