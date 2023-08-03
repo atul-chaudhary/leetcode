@@ -5,14 +5,123 @@ import java.util.*;
 
 public class Practise {
     public static void main(String[] args) {
-        int[][] grid = {
-                {1, 1, 0, 0, 0},
-                {1, 1, 0, 0, 0},
-                {0, 0, 0, 1, 1},
-                {0, 0, 0, 1, 1}};
-        System.out.println(countDistinctIslands(grid));
+        List<List<Integer>> adj = new ArrayList<>();
+        adj.add(Arrays.asList(2, 3));
+        adj.add(Arrays.asList(3));
+        adj.add(Arrays.asList(0, 3));
+        adj.add(Arrays.asList(0, 1, 2));
+
+        System.out.println(isBipartite(4, adj));
     }
 
+    List<Integer> eventualSafeNodes(int V, List<List<Integer>> adj) {
+        // Your code here
+
+        boolean[] vis = new boolean[V];
+        boolean[] pathVis = new boolean[V];
+        int[] check = new int[V];
+        for (int i = 0; i < V; i++) {
+            if (vis[i] == false) {
+                path(adj, vis, pathVis, i, check);
+            }
+        }
+
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < V; i++) {
+            if (check[i] == 1) {
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+    /*public boolean isCyclic(int V, ArrayList<ArrayList<Integer>> adj) {
+        // code here
+        boolean[] vis = new boolean[V];
+        boolean[] pathVis = new boolean[V];
+        for (int i = 0; i < V; i++) {
+            if (vis[i] == false) {
+                if (path(adj, vis, pathVis, i)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+     */
+
+    private static boolean path(List<List<Integer>> adj, boolean[] vis, boolean[] pathVis, int node, int[] nodes) {
+        vis[node] = true;
+        pathVis[node] = true;
+        for (int it : adj.get(node)) {
+            if (vis[it] == false) {
+                if (path(adj, vis, pathVis, it, nodes)) {
+                    return true;
+                }
+            } else if (pathVis[it]) {
+                return true;
+            }
+        }
+        nodes[node] = 1;
+        pathVis[node] = false;
+        return false;
+    }
+
+
+    static class Color {
+        int val;
+        int color;
+
+        public Color(int val, int color) {
+            this.val = val;
+            this.color = color;
+        }
+
+        @Override
+        public String toString() {
+            return "Color{" +
+                    "val=" + val +
+                    ", color=" + color +
+                    '}';
+        }
+    }
+
+    public static boolean isBipartite(int V, List<List<Integer>> adj) {
+        // Code here
+        int[] color = new int[V];
+        Arrays.fill(color, -1);
+        boolean[] vis = new boolean[V];
+
+        for (int i = 0; i < V; i++) {
+            if (vis[i] == false) {
+                if (color(adj, i, vis, color)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean color(List<List<Integer>> adj, int curNode, boolean[] vis, int[] col) {
+        Queue<Color> pq = new LinkedList<>();
+        pq.offer(new Color(curNode, 0));
+        vis[curNode] = true;
+        while (!pq.isEmpty()) {
+            Color c = pq.poll();
+            int node = c.val;
+            int color = c.color;
+            for (int it : adj.get(node)) {
+                if (vis[it] == false) {
+                    pq.offer(new Color(it, 1 - color));
+                    vis[it] = true;
+                    col[it] = 1 - color;
+                } else if (col[it] != -1 && color == col[it]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
     static int countDistinctIslands(int[][] grid) {
