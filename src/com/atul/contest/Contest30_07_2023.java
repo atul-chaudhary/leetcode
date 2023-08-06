@@ -4,11 +4,205 @@ import java.util.*;
 
 public class Contest30_07_2023 {
     public static void main(String[] args) {
-        List<List<Integer>> nums = new ArrayList<>();
-        nums.add(Arrays.asList(1, 0));
-        System.out.println(Arrays.toString(findOrder(2, 1, nums)));
+        String[] str = {"des", "der", "dfr", "dgt", "dfs"};
+        wordLadderLength("der", "dfs", str);
     }
 
+    static class Word {
+        String word;
+        int count;
+
+        public Word(String word, int count) {
+            this.word = word;
+            this.count = count;
+        }
+    }
+
+    public static void wordLadderLength(String startWord, String targetWord, String[] wordList) {
+        // Code here
+        Set<String> set = new HashSet<>();
+        for (String it : wordList) {
+            set.add(it);
+        }
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        wordBfs(set, startWord, targetWord, result);
+        System.out.println(result);
+    }
+
+    private static int wordBfs(Set<String> set, String start, String end, ArrayList<ArrayList<String>> result) {
+        Queue<Word> pq = new PriorityQueue<>((a, b) -> a.count - b.count);
+        pq.offer(new Word(start, 1));
+        set.remove(start);
+        ArrayList<String> list = new ArrayList<>();
+        list.add(start);
+        while (!pq.isEmpty()) {
+            for (int k = 0; k < pq.size(); k++) {
+                Word word = pq.poll();
+                String currentWord = word.word;
+                int cnt = word.count;
+                if (currentWord.equals(end)) {
+                    result.add(new ArrayList<>(list));
+                }
+                int wordLen = currentWord.length();
+                for (int i = 0; i < wordLen; i++) {
+                    for (char j = 'a'; j <= 'z'; j++) {
+                        char[] arr = currentWord.toCharArray();
+                        arr[i] = j;
+                        String formedWord = new String(arr);
+                        if (set.contains(formedWord)) {
+                            set.remove(formedWord);
+                            pq.offer(new Word(formedWord, cnt + 1));
+                            list.add(formedWord);
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    static class Edge {
+        int node;
+        int weight;
+
+        public Edge(int node, int weight) {
+            this.node = node;
+            this.weight = weight;
+        }
+
+        @Override
+        public String toString() {
+            return "{" + node +
+                    "," + weight + "}";
+        }
+    }
+
+    public static int[] shortestPath(int N, int M, int[][] edges) {
+        //Code here
+        List<List<Edge>> adj = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            adj.add(new ArrayList<>());
+        }
+        for (int i = 0; i < M; i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int wei = edges[i][2];
+            adj.get(u).add(new Edge(v, wei));
+        }
+        System.out.println(adj);
+        int[] result = new int[N];
+        Arrays.fill(result, (int) 1e9);
+        result[0] = 0;
+        Queue<Edge> pq = new LinkedList<>();
+        pq.offer(new Edge(0, 0));
+        while (!pq.isEmpty()) {
+            Edge edge = pq.poll();
+            int node = edge.node;
+            int weight = edge.weight;
+            result[node] = Math.min(weight, result[node]);
+            for (Edge it : adj.get(node)) {
+                if (result[it.node] > it.weight + weight) {
+                    pq.offer(new Edge(it.node, it.weight + weight));
+                }
+            }
+        }
+
+        for (int i = 0; i < result.length; i++) {
+            if (result[i] == (int) 1e9) {
+                result[i] = -1;
+            }
+        }
+        return result;
+    }
+
+    public static String findOrder(String[] dict, int N, int K) {
+        // Write your code here
+        Map<Character, Set<Character>> adj = new HashMap<>();
+        int len = dict.length;
+        for (int i = 1; i < len; i++) {
+            String s1 = dict[i - 1];
+            String s2 = dict[i];
+            int n = s1.length();
+            int m = s2.length();
+            int size = Math.min(n, m);
+            for (int index = 0; index < size; index++) {
+                char c1 = s1.charAt(index);
+                char c2 = s2.charAt(index);
+                if (c1 == c2) continue;
+                adj.putIfAbsent(c1, new HashSet<>());
+                adj.putIfAbsent(c2, new HashSet<>());
+                adj.get(c1).add(c2);
+                break;
+            }
+        }
+        System.out.println(adj);
+        Map<Character, Integer> map = new HashMap<>();
+        for (Map.Entry<Character, Set<Character>> entry : adj.entrySet()) {
+            map.putIfAbsent(entry.getKey(), 0);
+            for (Character it : entry.getValue()) {
+                map.put(it, map.getOrDefault(it, 0) + 1);
+            }
+        }
+        //System.out.println("dist " + map);
+        Queue<Character> pq = new LinkedList<>();
+        for (Map.Entry<Character, Integer> it : map.entrySet()) {
+            if (it.getValue() == 0) {
+                pq.offer(it.getKey());
+            }
+        }
+        String result = "";
+        while (!pq.isEmpty()) {
+            char node = pq.poll();
+            result += node;
+            for (char it : adj.get(node)) {
+                map.put(it, map.get(it) - 1);
+                if (map.get(it) == 0) {
+                    pq.offer(it);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    static List<Integer> eventualSafeNodes(int V, List<List<Integer>> adj) {
+        // Your code here
+        int[] ind = new int[V];
+        List<List<Integer>> adjNew = new ArrayList<>();
+
+        for (int i = 0; i < V; i++) {
+            adjNew.add(new ArrayList<>());
+        }
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < adj.get(i).size(); j++) {
+                ind[i]++;
+                int v = adj.get(i).get(j);
+                adjNew.get(v).add(i);
+            }
+        }
+
+        Queue<Integer> pq = new LinkedList<>();
+        for (int i = 0; i < V; i++) {
+            if (ind[i] == 0) {
+                pq.offer(i);
+            }
+        }
+        System.out.println(Arrays.toString(ind));
+        List<Integer> result = new ArrayList<>();
+        while (!pq.isEmpty()) {
+            int node = pq.poll();
+            result.add(node);
+            for (int it : adjNew.get(node)) {
+                ind[it]--;
+                if (ind[it] == 0) {
+                    pq.offer(it);
+                }
+            }
+        }
+
+        Collections.sort(result);
+        return result;
+    }
 
     public boolean isPalindrome(int x) {
         String str = String.valueOf(x);
