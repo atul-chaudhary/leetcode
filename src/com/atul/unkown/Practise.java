@@ -1,17 +1,326 @@
 package com.atul.unkown;
 
-
 import java.util.*;
 
 public class Practise {
     public static void main(String[] args) {
-        List<List<Integer>> adj = new ArrayList<>();
-        adj.add(Arrays.asList(2, 3));
-        adj.add(Arrays.asList(3));
-        adj.add(Arrays.asList(0, 3));
-        adj.add(Arrays.asList(0, 1, 2));
+        int[][] grid = {
+                {1, 1, 1, 1},
+                {1, 1, 0, 1},
+                {1, 1, 1, 1},
+                {1, 1, 0, 0},
+                {1, 0, 0, 1}};
+    }
 
-        System.out.println(isBipartite(4, adj));
+    public static int MinimumEffort(int grid[][]) {
+        int n = grid.length;
+        int m = grid[0].length;
+
+        int[][] dis = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                dis[i][j] = (int) 1e9;
+            }
+        }
+        dis[0][0] = 0;
+
+        Queue<TupleY> pq = new PriorityQueue<>((a, b) -> a.wt - b.wt);
+        pq.offer(new TupleY(0, 0));
+
+        int[] xcor = {1, -1, 0, 0};
+        int[] ycor = {0, 0, -1, 1};
+
+
+        while (!pq.isEmpty()) {
+            TupleY temp = pq.poll();
+            int i = temp.i;
+            int j = temp.j;
+
+            for (int k = 0; k < 4; k++) {
+                int xtemp = xcor[k] + i;
+                int ytemp = ycor[k] + j;
+
+                if (isValid(grid, xtemp, ytemp) && Math.abs(grid[xtemp][ytemp] - grid[i][j]) < dis[xtemp][ytemp]) {
+                    pq.offer(new TupleY(xtemp, ytemp));
+                    dis[xtemp][ytemp] = Math.abs(grid[xtemp][ytemp] - grid[i][j]);
+                }
+            }
+        }
+
+        return dis[n - 1][m - 1];
+    }
+
+    private static boolean isValid(int[][] grid, int i, int j) {
+        int n = grid.length;
+        int m = grid[0].length;
+
+        if (i < 0 || i >= n || j < 0 || j >= m) {
+            return false;
+        }
+        return true;
+    }
+
+    static class TupleY {
+        int i;
+        int j;
+        int wt;
+
+        public TupleY(int i, int j, int wt) {
+            this.i = i;
+            this.j = j;
+            this.wt = wt;
+        }
+
+        public TupleY(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+    }
+
+    public static int shortestPath(int[][] grid, int[] source, int[] destination) {
+        // Your code here
+
+        int n = grid.length;
+        int m = grid[0].length;
+
+        int[] xcor = {1, -1, 0, 0};
+        int[] ycor = {0, 0, -1, 1};
+
+        boolean[][] vis = new boolean[n][m];
+        vis[source[0]][source[1]] = true;
+
+        Queue<TupleY> pq = new PriorityQueue<>((a, b) -> a.wt - b.wt);
+        pq.offer(new TupleY(source[0], source[1], 0));
+
+        while (!pq.isEmpty()) {
+            TupleY temp = pq.poll();
+            int i = temp.i;
+            int j = temp.j;
+            int wt = temp.wt;
+
+            if (i == destination[0] && j == destination[1]) {
+                return wt;
+            }
+
+            for (int k = 0; k < 4; k++) {
+                int xtemp = xcor[k] + i;
+                int ytemp = ycor[k] + j;
+
+                if (xtemp < 0 || xtemp >= n || ytemp < 0 || ytemp >= m || grid[xtemp][ytemp] == 0 || vis[xtemp][ytemp]) {
+                    continue;
+                }
+
+                pq.offer(new TupleY(xtemp, ytemp, wt + 1));
+                vis[xtemp][ytemp] = true;
+            }
+        }
+
+        return -1;
+    }
+
+
+    static class PairY {
+        int vert;
+        int wt;
+
+        public PairY(int vert, int wt) {
+            this.vert = vert;
+            this.wt = wt;
+        }
+
+        @Override
+        public String toString() {
+            return "{" +
+                    +vert + ","
+                    + wt +
+                    '}';
+        }
+    }
+
+    public static List<Integer> shortestPath(int n, int m, int edges[][]) {
+        // code here
+
+        List<List<PairY>> adj = new ArrayList<>();
+        for (int i = 0; i <= n; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        for (int[] it : edges) {
+            int u = it[0];
+            int v = it[1];
+            int wt = it[2];
+
+            adj.get(u).add(new PairY(v, wt));
+            adj.get(v).add(new PairY(u, wt));
+        }
+
+        int[] dist = new int[n + 1];
+        int[] parent = new int[n + 1];
+        for (int i = 0; i <= n; i++) {
+            dist[i] = (int) 1e9;
+            parent[i] = i;
+        }
+
+        dist[1] = 0;
+        Queue<PairY> pq = new LinkedList<>();
+        pq.offer(new PairY(1, 0));
+
+        while (!pq.isEmpty()) {
+            PairY pairY = pq.poll();
+            int node = pairY.vert;
+            int wt = pairY.wt;
+
+            for (PairY it : adj.get(node)) {
+                if (wt + it.wt < dist[it.vert]) {
+                    dist[it.vert] = wt + it.wt;
+                    parent[it.vert] = node;
+                    pq.offer(new PairY(it.vert, wt + it.wt));
+                }
+            }
+        }
+
+//        System.out.println(Arrays.toString(dist));
+        //      System.out.println(Arrays.toString(parent));
+
+        if (dist[n] == (int) 1e9) {
+            return Collections.singletonList(-1);
+        }
+
+        List<Integer> result = new ArrayList<>();
+        result.add(n);
+        int index = n;
+        while (parent[index] != index) {
+            result.add(parent[index]);
+            index = parent[index];
+        }
+        Collections.reverse(result);
+        return result;
+    }
+
+    public static ArrayList<ArrayList<String>> findSequences(String startWord, String targetWord, String[] wordList) {
+        // Code here
+        Set<String> set = new HashSet<>();
+        for (String it : wordList) set.add(it);
+
+        Queue<ArrayList<String>> pq = new LinkedList<>();
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add(startWord);
+        pq.offer(arrayList);
+
+        int level = 0;
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+
+        ArrayList<String> usedWords = new ArrayList<>();
+        while (!pq.isEmpty()) {
+            int size = pq.size();
+
+            if (usedWords.size() > level) {
+                level++;
+                for (String it : usedWords) {
+                    set.remove(it);
+                }
+            }
+            for (int i = 0; i < size; i++) {
+                ArrayList<String> list = pq.poll();
+                String last = list.get(list.size() - 1);
+                if (last.equals(targetWord)) {
+                    result.add(list);
+                }
+                int len = last.length();
+                for (int j = 0; j < len; j++) {
+                    char[] chars = last.toCharArray();
+                    for (char ch = 'a'; ch <= 'z'; ch++) {
+                        chars[j] = ch;
+                        String formed = new String(chars);
+                        if (set.contains(formed)) {
+                            list.add(formed);
+                            pq.offer(new ArrayList<>(list));
+                            usedWords.add(formed);
+                            list.remove(list.size() - 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public ArrayList<ArrayList<String>> findSequencesYO(String startWord, String targetWord, String[] wordList) {
+
+        // Push all values of wordList into a set
+        // to make deletion from it easier and in less time complexity.
+        Set<String> st = new HashSet<String>();
+        int len = wordList.length;
+        for (int i = 0; i < len; i++) {
+            st.add(wordList[i]);
+        }
+
+        // Creating a queue ds which stores the words in a sequence which is
+        // required to reach the targetWord after successive transformations.
+        Queue<ArrayList<String>> q = new LinkedList<>();
+        ArrayList<String> ls = new ArrayList<>();
+        ls.add(startWord);
+        q.add(ls);
+        ArrayList<String> usedOnLevel = new ArrayList<>();
+        usedOnLevel.add(startWord);
+        int level = 0;
+
+        // A vector to store the resultant transformation sequence.
+        ArrayList<ArrayList<String>> ans = new ArrayList<>();
+        int cnt = 0;
+
+        // BFS traversal with pushing the new formed sequence in queue
+        // when after a transformation, a word is found in wordList.
+        while (!q.isEmpty()) {
+            cnt++;
+            ArrayList<String> vec = q.peek();
+            q.remove();
+
+            // Now, erase all words that have been
+            // used in the previous levels to transform
+            if (vec.size() > level) {
+                level++;
+                for (String it : usedOnLevel) {
+                    st.remove(it);
+                }
+            }
+
+            String word = vec.get(vec.size() - 1);
+
+            // store the answers if the end word matches with targetWord.
+            if (word.equals(targetWord)) {
+                // the first sequence where we reached the end.
+                if (ans.size() == 0) {
+                    ans.add(vec);
+                } else if (ans.get(0).size() == vec.size()) {
+                    ans.add(vec);
+                }
+            }
+            for (int i = 0; i < word.length(); i++) {
+
+                // Now, replace each character of ‘word’ with char
+                // from a-z then check if ‘word’ exists in wordList.
+                for (char c = 'a'; c <= 'z'; c++) {
+                    char[] replacedCharArray = word.toCharArray();
+                    replacedCharArray[i] = c;
+                    String replacedWord = new String(replacedCharArray);
+                    if (st.contains(replacedWord)) {
+                        vec.add(replacedWord);
+                        // Java works by reference, so enter the copy of vec
+                        // otherwise if you remove word from vec in next lines, it will
+                        // remove from everywhere
+                        ArrayList<String> temp = new ArrayList<>(vec);
+                        q.add(temp);
+                        // mark as visited on the level
+                        usedOnLevel.add(replacedWord);
+                        vec.remove(vec.size() - 1);
+                    }
+                }
+
+            }
+        }
+        return ans;
     }
 
     List<Integer> eventualSafeNodes(int V, List<List<Integer>> adj) {
