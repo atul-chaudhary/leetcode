@@ -4,60 +4,41 @@ import java.util.*;
 
 public class Practise {
     public static void main(String[] args) {
-        int[][] grid = {
-                {1, 1, 1, 1},
-                {1, 1, 0, 1},
-                {1, 1, 1, 1},
-                {1, 1, 0, 0},
-                {1, 0, 0, 1}};
+
+        int[] nums = {3, 4, 65};
+        System.out.println(minimumMultiplications(nums, 7, 66175));
     }
 
-    public static int MinimumEffort(int grid[][]) {
-        int n = grid.length;
-        int m = grid[0].length;
+    static int countPaths(int n, List<List<Integer>> roads) {
+        // Your code here
+        return 0;
+    }
 
-        int[][] dis = new int[n][m];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                dis[i][j] = (int) 1e9;
-            }
-        }
-        dis[0][0] = 0;
+    public static int minimumMultiplications(int[] arr, int start, int end) {
+        // Your code here]
+        Queue<Integer> pq = new LinkedList<>();
+        pq.offer(start);
 
-        Queue<TupleY> pq = new PriorityQueue<>((a, b) -> a.wt - b.wt);
-        pq.offer(new TupleY(0, 0));
-
-        int[] xcor = {1, -1, 0, 0};
-        int[] ycor = {0, 0, -1, 1};
-
+        int level = 0;
 
         while (!pq.isEmpty()) {
-            TupleY temp = pq.poll();
-            int i = temp.i;
-            int j = temp.j;
-
-            for (int k = 0; k < 4; k++) {
-                int xtemp = xcor[k] + i;
-                int ytemp = ycor[k] + j;
-
-                if (isValid(grid, xtemp, ytemp) && Math.abs(grid[xtemp][ytemp] - grid[i][j]) < dis[xtemp][ytemp]) {
-                    pq.offer(new TupleY(xtemp, ytemp));
-                    dis[xtemp][ytemp] = Math.abs(grid[xtemp][ytemp] - grid[i][j]);
+            int size = pq.size();
+            level++;
+            for (int i = 0; i < size; i++) {
+                int node = pq.poll();
+                System.out.println(node + "<<>>");
+                if (node == end) {
+                    return level - 1;
+                }
+                for (int it : arr) {
+                    if (it * node <= end) {
+                        pq.offer((it * node) % 100000);
+                    }
                 }
             }
         }
 
-        return dis[n - 1][m - 1];
-    }
-
-    private static boolean isValid(int[][] grid, int i, int j) {
-        int n = grid.length;
-        int m = grid[0].length;
-
-        if (i < 0 || i >= n || j < 0 || j >= m) {
-            return false;
-        }
-        return true;
+        return -1;
     }
 
     static class TupleY {
@@ -75,6 +56,112 @@ public class Practise {
             this.i = i;
             this.j = j;
         }
+
+        @Override
+        public String toString() {
+            return "{" +
+                    +i + ","
+                    + j + ","
+                    + wt + "," +
+                    '}';
+        }
+    }
+
+    public static int CheapestFLight(int n, int flights[][], int src, int dst, int k) {
+        // Code here
+        List<List<TupleY>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+        }
+        for (int[] it : flights) {
+            int u = it[0];
+            int v = it[1];
+            int wt = it[2];
+
+            //adj.putIfAbsent(u, new ArrayList<>());
+            adj.get(u).add(new TupleY(v, wt));
+        }
+        System.out.println(adj);
+        int[] dist = new int[n];
+        Arrays.fill(dist, (int) 1e9);
+        dist[src] = 0;
+        Queue<TupleY> pq = new LinkedList<>();
+        pq.offer(new TupleY(src, 0, 0));
+
+        int min = Integer.MAX_VALUE;
+        while (!pq.isEmpty()) {
+            TupleY temp = pq.poll();
+            int vert = temp.i;
+            int price = temp.j;
+            int stops = temp.wt;
+
+            if (stops <= k + 1 && vert == dst) {
+                min = Math.min(min, price);
+            }
+
+            for (TupleY it : adj.get(vert)) {
+                int vertIt = it.i;
+                int priceIt = it.j;
+                if (priceIt + price < dist[vertIt] && stops + 1 <= k + 1) {
+                    dist[vertIt] = price + priceIt;
+                    pq.offer(new TupleY(vertIt, dist[vertIt], stops + 1));
+                }
+            }
+        }
+        return min == Integer.MAX_VALUE ? -1 : min;
+    }
+
+
+    public static int MinimumEffort(int grid[][]) {
+        int n = grid.length;
+        int m = grid[0].length;
+
+        int[][] dis = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                dis[i][j] = (int) 1e9;
+            }
+        }
+        dis[0][0] = 0;
+
+        Queue<TupleY> pq = new PriorityQueue<>((a, b) -> a.wt - b.wt);
+        pq.offer(new TupleY(0, 0, 0));
+
+        int[] xcor = {1, -1, 0, 0};
+        int[] ycor = {0, 0, -1, 1};
+
+        while (!pq.isEmpty()) {
+            TupleY temp = pq.poll();
+            int i = temp.i;
+            int j = temp.j;
+            int diff = temp.wt;
+
+            if (i == n - 1 && j == m - 1) return diff;
+
+            for (int k = 0; k < 4; k++) {
+                int xtemp = xcor[k] + i;
+                int ytemp = ycor[k] + j;
+                if (isValid(grid, xtemp, ytemp)) {
+                    int newDiff = Math.max(Math.abs(grid[xtemp][ytemp] - grid[i][j]), diff);
+                    if (newDiff < dis[xtemp][ytemp]) {
+                        pq.offer(new TupleY(xtemp, ytemp, newDiff));
+                        dis[xtemp][ytemp] = newDiff;
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    private static boolean isValid(int[][] grid, int i, int j) {
+        int n = grid.length;
+        int m = grid[0].length;
+
+        if (i < 0 || i >= n || j < 0 || j >= m) {
+            return false;
+        }
+        return true;
     }
 
     public static int shortestPath(int[][] grid, int[] source, int[] destination) {
@@ -359,7 +446,8 @@ public class Practise {
     }
      */
 
-    private static boolean path(List<List<Integer>> adj, boolean[] vis, boolean[] pathVis, int node, int[] nodes) {
+    private static boolean path(List<List<Integer>> adj, boolean[] vis, boolean[] pathVis, int node,
+                                int[] nodes) {
         vis[node] = true;
         pathVis[node] = true;
         for (int it : adj.get(node)) {
@@ -1251,7 +1339,8 @@ public class Practise {
         return formTreePost(inorder, 0, n - 1, postOrder, 0, n - 1, inMap);
     }
 
-    private static Node formTreePost(int[] inorder, int inStart, int inEnd, int[] postOrder, int postStart, int postEnd, Map<Integer, TreeSet<Integer>> inMap) {
+    private static Node formTreePost(int[] inorder, int inStart, int inEnd, int[] postOrder, int postStart,
+                                     int postEnd, Map<Integer, TreeSet<Integer>> inMap) {
         if (postStart > postEnd || inStart > inEnd) return null;
 
         Node node = new Node(postOrder[postEnd]);
@@ -1482,7 +1571,8 @@ public class Practise {
             list.remove(list.size() - 1);
     }
 
-    public static void printRootToLeafPaths(Node node, Deque<Integer> path, ArrayList<ArrayList<Integer>> result) {
+    public static void printRootToLeafPaths(Node
+                                                    node, Deque<Integer> path, ArrayList<ArrayList<Integer>> result) {
         if (node == null) {
             return;
         }
