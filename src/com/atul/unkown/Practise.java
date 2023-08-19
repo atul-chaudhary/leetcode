@@ -4,41 +4,8 @@ import java.util.*;
 
 public class Practise {
     public static void main(String[] args) {
-
-        int[] nums = {3, 4, 65};
-        System.out.println(minimumMultiplications(nums, 7, 66175));
-    }
-
-    static int countPaths(int n, List<List<Integer>> roads) {
-        // Your code here
-        return 0;
-    }
-
-    public static int minimumMultiplications(int[] arr, int start, int end) {
-        // Your code here]
-        Queue<Integer> pq = new LinkedList<>();
-        pq.offer(start);
-
-        int level = 0;
-
-        while (!pq.isEmpty()) {
-            int size = pq.size();
-            level++;
-            for (int i = 0; i < size; i++) {
-                int node = pq.poll();
-                System.out.println(node + "<<>>");
-                if (node == end) {
-                    return level - 1;
-                }
-                for (int it : arr) {
-                    if (it * node <= end) {
-                        pq.offer((it * node) % 100000);
-                    }
-                }
-            }
-        }
-
-        return -1;
+        int[][] nums = {{0, 6, 7}, {0, 1, 2}, {1, 2, 3}, {1, 3, 3}, {6, 3, 3}, {3, 5, 1}, {6, 5, 1}, {2, 5, 1}, {0, 4, 5}, {4, 6, 2}};
+        //System.out.println(countPaths(7, nums));
     }
 
     static class TupleY {
@@ -65,6 +32,129 @@ public class Practise {
                     + wt + "," +
                     '}';
         }
+    }
+
+    static int mod = (int) 1e9 + 7;
+
+    static class Pair {
+        int first;
+        int second;
+
+        public Pair(int first, int second) {
+            this.first = first;
+            this.second = second;
+        }
+    }
+
+    static int countPaths(int n, List<List<Integer>> roads) {
+
+
+        // Creating an adjacency list for the given graph.
+        ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+        }
+        int m = roads.size();
+        for (int i = 0; i < m; i++) {
+            adj.get(roads.get(i).get(0)).add(new Pair(roads.get(i).get(1), roads.get(i).get(2)));
+            adj.get(roads.get(i).get(1)).add(new Pair(roads.get(i).get(0), roads.get(i).get(2)));
+        }
+
+        // Defining a priority queue (min heap).
+        PriorityQueue<Pair> pq = new PriorityQueue<Pair>((x, y) -> x.first - y.first);
+
+        // Initializing the dist array and the ways array
+        // along with their first indices.
+        Long[] dist = new Long[n];
+        int[] ways = new int[n];
+        for (int i = 0; i < n; i++) {
+            dist[i] = Long.MAX_VALUE;
+            ways[i] = 0;
+        }
+        dist[0] = 0L;
+        ways[0] = 1;
+        pq.add(new Pair(0, 0));
+
+        // Define modulo value
+        int mod = (int) (1e9 + 7);
+
+        // Iterate through the graph with the help of priority queue
+        // just as we do in Dijkstra's Algorithm.
+        while (pq.size() != 0) {
+            int dis = pq.peek().first;
+            int node = pq.peek().second;
+            pq.remove();
+
+            for (Pair it : adj.get(node)) {
+                int adjNode = it.first;
+                int edW = it.second;
+
+                if (dis + edW < dist[adjNode]) {
+                    dist[adjNode] = (long) dis + (edW);
+                    pq.add(new Pair(dis + edW, adjNode));
+                    ways[adjNode] = ways[node];
+                }
+
+                // If we again encounter a node with the same short distance
+                // as before, we simply increment the no. of ways.
+                else if (dis + edW == dist[adjNode]) {
+                    ways[adjNode] = (ways[adjNode] + ways[node]) % mod;
+                }
+            }
+        }
+        // Finally, we return the no. of ways to reach
+        // (n-1)th node modulo 10^9+7.
+        return ways[n - 1] % mod;
+    }
+
+    private static int dijKat(List<List<TupleY>> adj, int src, int dst, int n) {
+        Queue<TupleY> pq = new PriorityQueue<>((a, b) -> a.j - b.j);
+        pq.offer(new TupleY(src, 0));
+
+        int[] dis = new int[n];
+        Arrays.fill(dis, (int) 1e9);
+        dis[src] = 0;
+        while (!pq.isEmpty()) {
+            TupleY temp = pq.poll();
+            int u = temp.i;
+            int wt = temp.j;
+            if (u == dst) {
+                return wt;
+            }
+            for (TupleY it : adj.get(u)) {
+                if (it.j + wt < dis[it.i]) {
+                    dis[it.i] = it.j + wt;
+                    pq.offer(new TupleY(it.i, it.j + wt));
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static int minimumMultiplications(int[] arr, int start, int end) {
+        // Your code here]
+        Queue<Integer> pq = new LinkedList<>();
+        pq.offer(start);
+
+        int level = 0;
+
+        while (!pq.isEmpty()) {
+            int size = pq.size();
+            level++;
+            for (int i = 0; i < size; i++) {
+                int node = pq.poll();
+                if (node == end) {
+                    return level - 1;
+                }
+                for (int it : arr) {
+                    if (it * node <= end) {
+                        pq.offer((it * node) % 100000);
+                    }
+                }
+            }
+        }
+
+        return -1;
     }
 
     public static int CheapestFLight(int n, int flights[][], int src, int dst, int k) {
@@ -1252,8 +1342,7 @@ public class Practise {
         return solve(arr, 0, sum, dp);
     }
 
-    static int mod = (int) 1e9 + 7;
-
+    //    static int mod = (int) 1e9 + 7;
     private static int solve(int[] nums, int index, int sum, Integer[][] dp) {
         if (sum == 0 && index == nums.length) return 1;
         if (index >= nums.length) return 0;
