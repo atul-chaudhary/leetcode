@@ -4,8 +4,109 @@ import java.util.*;
 
 public class Practise {
     public static void main(String[] args) {
-        int[][] nums = {{0, 6, 7}, {0, 1, 2}, {1, 2, 3}, {1, 3, 3}, {6, 3, 3}, {3, 5, 1}, {6, 5, 1}, {2, 5, 1}, {0, 4, 5}, {4, 6, 2}};
-        //System.out.println(countPaths(7, nums));
+        int[][] edges = {
+                {9, 5, 43},
+                {9, 7, 43},
+                {6, 0, 75},
+                {4, 7, 56},
+                {2, 9, 4},
+                {3, 5, 31},
+                {5, 6, 20}
+        };
+
+        System.out.println(findCity(10, edges.length, edges, 266));
+    }
+
+    public static int findCity(int n, int m, int[][] edges, int distanceThreshold) {
+        //code here
+        int[][] grid = new int[n][n];
+        for (int[] it : grid) {
+            Arrays.fill(it, -1);
+        }
+        int len = edges.length;
+        for (int[] it : edges) {
+            int u = it[0];
+            int v = it[1];
+            int wt = it[2];
+
+            grid[u][v] = wt;
+            grid[v][u] = wt;
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == j) {
+                    grid[i][j] = 0;
+                }
+                if (grid[i][j] == -1) {
+                    grid[i][j] = (int) 1e9;
+                }
+            }
+        }
+
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    grid[i][j] = Math.min(grid[i][j], grid[i][k] + grid[k][j]);
+                }
+            }
+        }
+
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == j) continue;
+                if (grid[i][j] <= distanceThreshold) {
+                    map.put(i, map.getOrDefault(i, 0) + 1);
+                }
+            }
+        }
+
+        System.out.println(map);
+        int ans = -1;
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < n; i++) {
+            int val = map.getOrDefault(i, 0);
+            if (val <= min) {
+                min = val;
+                ans = Math.max(ans, i);
+            }
+        }
+        return ans;
+    }
+
+    public void shortest_distance(int[][] matrix) {
+        // Code here
+        int n = matrix.length;
+        int m = matrix[0].length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (i == j) {
+                    matrix[i][j] = 0;
+                }
+
+                if (matrix[i][j] == -1) {
+                    matrix[i][j] = (int) 1e9;
+                }
+            }
+        }
+
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    matrix[j][i] = Math.min(matrix[j][i], matrix[j][j] + matrix[j][i]);
+                }
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (matrix[i][j] == 1e9) {
+                    matrix[i][j] = -1;
+                }
+            }
+        }
+
     }
 
     static class TupleY {
@@ -35,77 +136,6 @@ public class Practise {
     }
 
     static int mod = (int) 1e9 + 7;
-
-    static class Pair {
-        int first;
-        int second;
-
-        public Pair(int first, int second) {
-            this.first = first;
-            this.second = second;
-        }
-    }
-
-    static int countPaths(int n, List<List<Integer>> roads) {
-
-
-        // Creating an adjacency list for the given graph.
-        ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            adj.add(new ArrayList<>());
-        }
-        int m = roads.size();
-        for (int i = 0; i < m; i++) {
-            adj.get(roads.get(i).get(0)).add(new Pair(roads.get(i).get(1), roads.get(i).get(2)));
-            adj.get(roads.get(i).get(1)).add(new Pair(roads.get(i).get(0), roads.get(i).get(2)));
-        }
-
-        // Defining a priority queue (min heap).
-        PriorityQueue<Pair> pq = new PriorityQueue<Pair>((x, y) -> x.first - y.first);
-
-        // Initializing the dist array and the ways array
-        // along with their first indices.
-        Long[] dist = new Long[n];
-        int[] ways = new int[n];
-        for (int i = 0; i < n; i++) {
-            dist[i] = Long.MAX_VALUE;
-            ways[i] = 0;
-        }
-        dist[0] = 0L;
-        ways[0] = 1;
-        pq.add(new Pair(0, 0));
-
-        // Define modulo value
-        int mod = (int) (1e9 + 7);
-
-        // Iterate through the graph with the help of priority queue
-        // just as we do in Dijkstra's Algorithm.
-        while (pq.size() != 0) {
-            int dis = pq.peek().first;
-            int node = pq.peek().second;
-            pq.remove();
-
-            for (Pair it : adj.get(node)) {
-                int adjNode = it.first;
-                int edW = it.second;
-
-                if (dis + edW < dist[adjNode]) {
-                    dist[adjNode] = (long) dis + (edW);
-                    pq.add(new Pair(dis + edW, adjNode));
-                    ways[adjNode] = ways[node];
-                }
-
-                // If we again encounter a node with the same short distance
-                // as before, we simply increment the no. of ways.
-                else if (dis + edW == dist[adjNode]) {
-                    ways[adjNode] = (ways[adjNode] + ways[node]) % mod;
-                }
-            }
-        }
-        // Finally, we return the no. of ways to reach
-        // (n-1)th node modulo 10^9+7.
-        return ways[n - 1] % mod;
-    }
 
     private static int dijKat(List<List<TupleY>> adj, int src, int dst, int n) {
         Queue<TupleY> pq = new PriorityQueue<>((a, b) -> a.j - b.j);
@@ -2224,6 +2254,7 @@ public class Practise {
             this.val = val;
             this.fre = fre;
         }
+
     }
 
     public int[] topKFrequent(int[] nums, int k) {
