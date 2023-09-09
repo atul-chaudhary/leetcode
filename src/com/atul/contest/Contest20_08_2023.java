@@ -2,13 +2,70 @@ package com.atul.contest;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Contest20_08_2023 {
     public static void main(String[] args) {
-
+        String strr = "2245047";
+        System.out.println(minimumOperations(strr));
     }
+
+    public static int minimumOperations(String num) {
+        int n = num.length();
+        String sub = num.substring(n - 2);
+        if (check(sub)) {
+            return 0;
+        }
+
+        return 0;
+    }
+
+    private static int solve(StringBuilder num, int index) {
+        if (index >= num.length()) return 0;
+        String sub = num.substring(num.length() - 2);
+        StringBuilder ch = num.deleteCharAt(index);
+        int pick = 1 + solve(num, index - 1);
+        num.append(ch);
+
+        return 0;
+    }
+
+    private static boolean check(String num) {
+        if (num.equals("00") || num.equals("25") || num.equals("50") || num.equals("75")) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public static int countSymmetricIntegers(int low, int high) {
+        int count = 0;
+        for (int i = low; i <= high; i++) {
+            String str = String.valueOf(i);
+            if (str.length() % 2 == 1) continue;
+
+            if (solve(str)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static boolean solve(String str) {
+        int n = str.length();
+        int count = 0;
+        int first = n / 2;
+        for (int i = 0; i < first; i++) {
+            count += Integer.parseInt(String.valueOf(str.charAt(i)));
+        }
+
+        int count2 = 0;
+        for (int i = first; i < n; i++) {
+            count2 += Integer.parseInt(String.valueOf(str.charAt(i)));
+        }
+        return count == count2;
+    }
+
 
     public static boolean isDateValid(int year, int month, int day) {
         try {
