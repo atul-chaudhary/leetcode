@@ -4,17 +4,231 @@ import java.util.*;
 
 public class Practise {
     public static void main(String[] args) {
-        int[][] edges = {
-                {9, 5, 43},
-                {9, 7, 43},
-                {6, 0, 75},
-                {4, 7, 56},
-                {2, 9, 4},
-                {3, 5, 31},
-                {5, 6, 20}
-        };
+        List<Integer> tasks = Arrays.asList(2, 3, 1, 2, 5, 8, 4, 3);
+        List<Integer> proce = Arrays.asList(8, 10);
+        System.out.println(minProcessingTime(proce, tasks));
+    }
 
-        System.out.println(findCity(10, edges.length, edges, 266));
+    public static int minProcessingTime(List<Integer> processorTime, List<Integer> tasks) {
+        int n = tasks.size();
+        Collections.sort(tasks);
+        int index = 0;
+        int cur = n / 4;
+        int max = Integer.MIN_VALUE;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            count++;
+            int num = tasks.get(i);
+            int cal = processorTime.get(index) + num;
+            max = Math.max(max, cal);
+            if (count == cur) {
+                count = 0;
+            }
+        }
+        return max;
+    }
+
+    public int differenceOfSums(int n, int m) {
+        int sum = 0;
+        for (int i = 1; i <= n; i++) {
+            if (i % m != 0) {
+                sum += i;
+            }
+        }
+
+        int sum2 = 0;
+        for (int i = 1; i <= n; i++) {
+            if (i % m == 0) {
+                sum2 += i;
+            }
+        }
+
+        return sum - sum2;
+    }
+
+    public static long maximumTripletValue(int[] nums) {
+        int n = nums.length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+
+        left[0] = nums[0];
+        right[n - 1] = nums[n - 1];
+        for (int i = 1; i < n; i++) {
+            left[i] = Math.max(left[i - 1], nums[i]);
+        }
+        for (int i = n - 2; i >= 0; i--) {
+            right[i] = Math.max(right[i + 1], nums[i]);
+        }
+
+        long result = Long.MIN_VALUE;
+        for (int i = 1; i <= n - 2; i++) {
+            long cur = left[i - 1] - nums[i];
+            result = Math.max(cur * right[i + 1], result);
+        }
+        return result;
+    }
+
+    public static long maximumTripletValueNotOpt(int[] nums) {
+        int n = nums.length;
+        int curIndex = -1;
+        int maxTillNow = nums[0];
+        int max = 0;
+        for (int i = 1; i < n - 1; i++) {
+            int num = maxTillNow - nums[i];
+            if (num > max) {
+                max = num;
+                curIndex = i;
+            }
+            maxTillNow = Math.max(maxTillNow, nums[i]);
+        }
+
+
+        System.out.println(max + "<<>>");
+        int maxCur = 1;
+        for (int i = curIndex + 1; i < n; i++) {
+            maxCur = Math.max(maxCur, nums[i]);
+        }
+
+        long result = (long) max * maxCur;
+        if (result < 0) return 0;
+        return result;
+    }
+
+    public static long maximumTripletValuetry(int[] nums) {
+        int n = nums.length;
+        int firstIndex = -1;
+        int first = 0;
+        for (int i = 0; i < n - 2; i++) {
+            if (nums[i] > first) {
+                first = nums[i];
+                firstIndex = i;
+            }
+        }
+
+        int secIndex = -1;
+        int sec = Integer.MAX_VALUE;
+        for (int i = firstIndex + 1; i < n - 1; i++) {
+            if (nums[i] < sec) {
+                sec = nums[i];
+                secIndex = i;
+            }
+        }
+
+        int thirdIndex = -1;
+        int third = Integer.MIN_VALUE;
+        for (int i = secIndex + 1; i < n; i++) {
+            if (nums[i] > third) {
+                third = nums[i];
+                thirdIndex = i;
+            }
+        }
+
+        long num = (long) (nums[firstIndex] - nums[secIndex]) * nums[thirdIndex];
+        if (num < 0) return 0;
+        return num;
+    }
+
+    public long maximumTripletValue1(int[] nums) {
+        int n = nums.length;
+        long max = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                for (int k = j + 1; k < n; k++) {
+                    long num = (long) (nums[i] - nums[j]) * nums[k];
+                    max = Math.max(num, max);
+                }
+            }
+        }
+        return max;
+    }
+
+    public static int maxNumberOfAlloys(int n, int k, int budget, List<List<Integer>> composition, List<Integer> stock, List<Integer> cost) {
+        int ans = 0;
+        for (List<Integer> it : composition) {
+            int res = binarySearch(it, stock, cost, budget);
+            ans = Math.max(ans, res);
+        }
+        return ans;
+    }
+
+    private static int binarySearch(List<Integer> composition, List<Integer> stock, List<Integer> cost, int budget) {
+        int first = 0;
+        int last = (int) 1e9;
+        int result = 0;
+        while (first <= last) {
+            int mid = (first + last) / 2;
+            if (check(mid, composition, stock, cost, budget)) {
+                result = mid;
+                first = mid + 1;
+            } else {
+                last = mid - 1;
+            }
+        }
+        return result;
+    }
+
+    private static boolean check(int cur, List<Integer> composition, List<Integer> stock, List<Integer> cost, int budget) {
+        int n = stock.size();
+        long total = 0;
+        for (int i = 0; i < n; i++) {
+            total += (long) (Math.max((cur * composition.get(i) - stock.get(i)), 0)) * cost.get(i);
+        }
+        return total <= budget;
+    }
+
+    public static int sumIndicesWithKSetBits(List<Integer> nums, int k) {
+        int n = nums.size();
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            int it = countSetBits(i);
+            if (it == k) {
+                ans += nums.get(i);
+            }
+        }
+        return ans;
+    }
+
+    static int countSetBits(int n) {
+        int count = 0;
+        while (n > 0) {
+            count += n & 1;
+            n >>= 1;
+        }
+        return count;
+    }
+
+
+    //00,25,50,75
+    public static int minimumOperations(String num) {
+        int n = num.length();
+        int index5 = num.lastIndexOf("5");
+        int index0 = num.lastIndexOf("0");
+        int ans = n;
+
+        if (index0 != -1) {
+            for (int i = index0 - 1; i >= 0; i--) {
+                int cur = Integer.parseInt(String.valueOf(num.charAt(i)));
+                if (cur == 0 || cur == 5) {
+                    int val = n - (index0 + 1);
+                    val += (index0 - (i + 1));
+                    ans = Math.min(ans, val);
+                }
+            }
+            ans = Math.min(ans, n - 1);
+        }
+
+        if (index5 != -1) {
+            for (int i = index5 - 1; i >= 0; i--) {
+                int cur = Integer.parseInt(String.valueOf(num.charAt(i)));
+                if (cur == 2 || cur == 7) {
+                    int val = n - (index5 + 1);
+                    val += (index5 - (i + 1));
+                    ans = Math.min(ans, val);
+                }
+            }
+        }
+
+        return Math.min(ans, n);
     }
 
     public static int findCity(int n, int m, int[][] edges, int distanceThreshold) {
