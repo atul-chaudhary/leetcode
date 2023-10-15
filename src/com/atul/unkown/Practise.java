@@ -5,24 +5,29 @@ import java.util.*;
 public class Practise {
     public static void main(String[] args) {
         List<Integer> tasks = Arrays.asList(2, 3, 1, 2, 5, 8, 4, 3);
-        List<Integer> proce = Arrays.asList(8, 10);
+        List<Integer> proce = Arrays.asList(10, 20);
         System.out.println(minProcessingTime(proce, tasks));
     }
+
+
 
     public static int minProcessingTime(List<Integer> processorTime, List<Integer> tasks) {
         int n = tasks.size();
         Collections.sort(tasks);
+        Collections.sort(processorTime, Collections.reverseOrder());
         int index = 0;
-        int cur = n / 4;
+        int cur = n / processorTime.size();
         int max = Integer.MIN_VALUE;
         int count = 0;
         for (int i = 0; i < n; i++) {
             count++;
             int num = tasks.get(i);
             int cal = processorTime.get(index) + num;
+            //System.out.println(index + "<<>>" + cal);
             max = Math.max(max, cal);
             if (count == cur) {
                 count = 0;
+                index++;
             }
         }
         return max;
