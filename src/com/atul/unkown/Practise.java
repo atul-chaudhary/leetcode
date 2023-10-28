@@ -4,11 +4,101 @@ import java.util.*;
 
 public class Practise {
     public static void main(String[] args) {
-        List<Integer> tasks = Arrays.asList(2, 3, 1, 2, 5, 8, 4, 3);
-        List<Integer> proce = Arrays.asList(10, 20);
-        System.out.println(minProcessingTime(proce, tasks));
+        int[] nums = {3, 3, 3, 3, 3, 1, 1};//{3, 2, 3, 2, 3};
+        System.out.println(minGroupsForValidAssignment(nums));
     }
 
+
+
+    public static int minGroupsForValidAssignment(int[] nums) {
+        int n = nums.length;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            map.put(nums[i], map.getOrDefault(nums[i], 0) + 1);
+        }
+        int min = Integer.MAX_VALUE;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            int val = entry.getValue();
+            min = Math.min(min, val);
+        }
+
+        int count = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            int val = entry.getValue();
+            if (val == min) {
+                count += 1;
+                continue;
+            }
+            int you = min + 1;
+            int cal = 0;
+            if (val % you == 0) {
+                cal = val / you;
+            } else {
+                cal = (val / you) + 1;
+            }
+            count += cal;
+        }
+        return count;
+    }
+
+
+    public static int minimumSum1(int[] nums) {
+        int n = nums.length;
+        int[] minleft = new int[n];
+        minleft[0] = nums[0];
+        for (int i = 1; i < n; i++) {
+            minleft[i] = Math.min(minleft[i - 1], nums[i]);
+        }
+
+        int[] minRight = new int[n];
+        minRight[n - 1] = nums[n - 1];
+        for (int i = n - 2; i >= 0; i--) {
+            minRight[i] = Math.min(minRight[i + 1], nums[i]);
+        }
+
+        System.out.println(Arrays.toString(minleft));
+        System.out.println(Arrays.toString(minRight));
+
+        int min = Integer.MAX_VALUE;
+        for (int i = 1; i < n - 1; i++) {
+            if (minleft[i - 1] < nums[i] && minRight[i + 1] < nums[i]) {
+                int count = nums[i] + minleft[i - 1] + minRight[i + 1];
+                if (count < min) {
+                    min = count;
+                }
+            }
+            //min = Math.min(min, count);
+        }
+        return min == Integer.MAX_VALUE ? -1 : min;
+    }
+
+    public int minimumSum(int[] nums) {
+        int n = nums.length;
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                for (int k = j + 1; k < n; k++) {
+                    if (nums[i] < nums[j] && nums[k] < nums[j]) {
+                        int count = nums[i] + nums[j] + nums[k];
+                        min = Math.min(count, min);
+                    }
+                }
+            }
+        }
+        return min == Integer.MAX_VALUE ? -1 : min;
+    }
+
+    public static int[] findIndices(int[] nums, int indexDifference, int valueDifference) {
+        int n = nums.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (Math.abs(i - j) >= indexDifference && Math.abs(nums[i] - nums[j]) >= valueDifference) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+        return new int[]{-1, -1};
+    }
 
 
     public static int minProcessingTime(List<Integer> processorTime, List<Integer> tasks) {
@@ -147,7 +237,8 @@ public class Practise {
         return max;
     }
 
-    public static int maxNumberOfAlloys(int n, int k, int budget, List<List<Integer>> composition, List<Integer> stock, List<Integer> cost) {
+    public static int maxNumberOfAlloys(int n, int k, int budget, List<List<Integer>>
+            composition, List<Integer> stock, List<Integer> cost) {
         int ans = 0;
         for (List<Integer> it : composition) {
             int res = binarySearch(it, stock, cost, budget);
@@ -156,7 +247,8 @@ public class Practise {
         return ans;
     }
 
-    private static int binarySearch(List<Integer> composition, List<Integer> stock, List<Integer> cost, int budget) {
+    private static int binarySearch(List<Integer> composition, List<Integer> stock, List<Integer> cost,
+                                    int budget) {
         int first = 0;
         int last = (int) 1e9;
         int result = 0;
@@ -172,7 +264,8 @@ public class Practise {
         return result;
     }
 
-    private static boolean check(int cur, List<Integer> composition, List<Integer> stock, List<Integer> cost, int budget) {
+    private static boolean check(int cur, List<
+            Integer> composition, List<Integer> stock, List<Integer> cost, int budget) {
         int n = stock.size();
         long total = 0;
         for (int i = 0; i < n; i++) {
