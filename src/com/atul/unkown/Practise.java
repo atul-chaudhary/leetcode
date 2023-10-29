@@ -8,8 +8,6 @@ public class Practise {
         System.out.println(minGroupsForValidAssignment(nums));
     }
 
-
-
     public static int minGroupsForValidAssignment(int[] nums) {
         int n = nums.length;
         Map<Integer, Integer> map = new HashMap<>();
