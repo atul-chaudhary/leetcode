@@ -1,26 +1,87 @@
 package com.atul.contest;
 
-import com.atul.heap.MergeIntervals;
-
 import java.util.*;
 
 public class Contest06_01_2024 {
     public static void main(String[] args) {
-        TreeNode node = new TreeNode(8);
-        node.left = new TreeNode(3);
-
-        node.left.left = new TreeNode(1);
-        node.left.right = new TreeNode(6);
-        node.left.right.left = new TreeNode(4);
-        node.left.right.right = new TreeNode(7);
-
-
-        node.right = new TreeNode(10);
-        node.right.right = new TreeNode(14);
-        node.right.right.left = new TreeNode(13);
-
-        System.out.println(maxAncestorDiff(node));
     }
+
+    public static List<Integer> beautifulIndices(String s, String a, String b, int k) {
+        int n = s.length();
+        Queue<Integer> apq = new LinkedList<>();
+        //Queue<Integer> bpq = new LinkedList<>();
+        TreeSet<Integer> set = new TreeSet<>();
+        for (int i = 0; i < n - Math.min(a.length(), b.length()) + 1; i++) {
+            char ch = s.charAt(i);
+            if (ch == a.charAt(0) && helper(s, a, i)) {
+                apq.add(i);
+            }
+            if (ch == b.charAt(0) && helper(s, b, i)) {
+                //bpq.add(i);
+                set.add(i);
+            }
+        }
+
+        //System.out.println(apq);
+        //System.out.println(set);
+
+        Set<Integer> result = new HashSet<>();
+        while (!apq.isEmpty()) {
+            int afirst = apq.poll();
+            if (set.floor(afirst) != null) {
+                int floor = set.floor(afirst);
+                if (Math.abs(floor - afirst) <= k) {
+                    result.add(afirst);
+                }
+            }
+            ;
+            if (set.ceiling(afirst) != null) {
+                int ciel = set.ceiling(afirst);
+                if (Math.abs(ciel - afirst) <= k) {
+                    result.add(afirst);
+                }
+            }
+        }
+        List<Integer> finaResult = new ArrayList<>(result);
+        Collections.sort(finaResult);
+        return finaResult;
+    }
+
+
+    private static boolean helper(String s, String str, int index) {
+        boolean flag = true;
+        int idx = 0;
+        int count = 0;
+        if (index + str.length() <= s.length())
+            for (int i = index; i < index + str.length(); i++) {
+                count++;
+                char sChar = s.charAt(i);
+                char strChar = str.charAt(idx);
+                idx++;
+                if (sChar != strChar) {
+                    flag = false;
+                }
+            }
+        return flag && count == str.length();
+    }
+
+
+    public static int maxFrequencyElements(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int max = Integer.MIN_VALUE;
+        for (int it : nums) {
+            map.put(it, map.getOrDefault(it, 0) + 1);
+            max = Math.max(max, map.get(it));
+        }
+        int result = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == max) {
+                result += entry.getValue();
+            }
+        }
+        return result;
+    }
+
 
     static class TreeNode {
         int val;
