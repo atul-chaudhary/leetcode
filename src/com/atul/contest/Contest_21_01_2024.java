@@ -5,10 +5,121 @@ import java.util.*;
 public class Contest_21_01_2024 {
 
     public static void main(String[] args) {
-        int[][] nums = {{1, 2, -1}, {4, -1, 6}, {7, 8, 9}};
-        System.out.println(Arrays.deepToString(modifiedMatrix(nums)));
+        String[] words = {"a", "aba", "ababa", "aa"};
+        System.out.println(countPrefixSuffixPairs(words));
     }
 
+
+    //trie
+    class Trie {
+        Trie node[] = new Trie[26];
+        boolean isEnd = false;
+
+        public boolean contains(char key) {
+            return node[key - '0'] != null;
+        }
+
+        public Trie get(char key) {
+            return node[key - '0'];
+        }
+
+        public void insert(int word) {
+            String str = new String(String.valueOf(word));
+            int n = str.length();
+            for (int i = 0; i < n; i++) {
+                char ch = str.charAt(i);
+                if (contains(ch) == false) {
+                    node[ch-'0'] = new Trie();
+                }
+            }
+        }
+    }
+
+    public static int countPrefixSuffixPairs(String[] words) {
+        int n = words.length;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (isSufPref(words[i], words[j])) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private static boolean isSufPref(String s1, String s2) {
+        int n = s1.length();
+        int m = s2.length();
+        if (n > m) return false;
+        boolean isPref = true;
+        boolean isSuf = true;
+
+        for (int i = 0; i < n; i++) {
+            char ch1 = s1.charAt(i);
+            char ch2 = s2.charAt(i);
+            if (ch1 != ch2) {
+                isPref = false;
+                break;
+            }
+        }
+
+        int index = 0;
+        for (int i = m - n; i < m; i++) {
+            char ch1 = s1.charAt(index++);
+            char ch2 = s2.charAt(i);
+            if (ch1 != ch2) {
+                isSuf = false;
+                break;
+            }
+        }
+        return isSuf && isPref;
+    }
+
+    public int maxOperationsII(int[] nums) {
+        return 0;
+    }
+
+    public static String lastNonEmptyString(String s) {
+        Map<Character, Integer> map = new HashMap<>();
+        int n = s.length();
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < n; i++) {
+            char ch = s.charAt(i);
+            map.put(ch, map.getOrDefault(ch, 0) + 1);
+            max = Math.max(max, map.get(ch));
+        }
+        String result = "";
+        Map<Character, Integer> curCount = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            char ch = s.charAt(i);
+            curCount.put(ch, curCount.getOrDefault(ch, 0) + 1);
+            if (curCount.get(ch) == max) {
+                result += ch;
+            }
+        }
+        return result;
+    }
+
+    public static int maxOperations(int[] nums) {
+        Queue<Integer> pq = new LinkedList<>();
+        for (int it : nums) {
+            pq.offer(it);
+        }
+
+        int last = nums[0] + nums[1];
+        int count = 0;
+        while (pq.size() > 2) {
+            int first = pq.poll();
+            int second = pq.poll();
+            if (last == first + second) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
 
 
     public static int[][] modifiedMatrix(int[][] matrix) {
