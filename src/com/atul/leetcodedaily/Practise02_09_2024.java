@@ -1,12 +1,526 @@
 package com.atul.leetcodedaily;
 
+
 import java.util.*;
 
 public class Practise02_09_2024 {
     public static void main(String[] args) {
-        int[] nums = {-1, -1, 1};
-        System.out.println(subarraySum1(nums, 0));
+        int c = 5;
+        int[][] connections = {{1, 2}, {2, 3}, {3, 4}, {4, 5}};
+        int[][] queries = {{1, 3}, {2, 1}, {1, 1}, {2, 2}, {1, 2}};
+        System.out.println(Arrays.toString(processQueries(c, connections, queries)));
     }
+
+
+
+    public static int[] processQueries1(int c, int[][] connections, int[][] queries) {
+        Map<Integer, List<Integer>> graph = new HashMap<>();
+        Map<Integer, Boolean> offlineOrOnline = new HashMap<>();
+        for (int i = 1; i <= c; i++) {
+            graph.put(i, new ArrayList<>());
+            offlineOrOnline.put(i, true);
+        }
+        for (int[] it : connections) {
+            int u = it[0];
+            int v = it[1];
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
+
+
+        int cur = 0;
+        boolean[] seen = new boolean[c + 1];
+        Map<Integer, Integer> powerGrid = new HashMap<>();
+        Map<Integer, TreeSet<Integer>> powerSetup = new HashMap<>();
+        for (int i = 1; i <= c; i++) {
+            if (seen[i] == false) {
+                dfs(graph, i, seen, cur, powerGrid, powerSetup);
+                cur++;
+            }
+        }
+
+
+        List<Integer> result = new ArrayList<>();
+        for (int[] it : queries) {
+            int type = it[0];
+            int node = it[1];
+            if (type == 2) {
+                offlineOrOnline.put(node, false);
+                int curType = powerGrid.get(node);
+                powerSetup.get(curType).remove(node);
+            } else {
+                if (offlineOrOnline.get(node)) {
+                    result.add(node);
+                } else {
+                    int curNum = powerGrid.get(node);
+                    if (!powerSetup.get(curNum).isEmpty()) {
+                        result.add(powerSetup.get(curNum).first());
+                    } else {
+                        result.add(-1);
+                    }
+                }
+            }
+        }
+        int[] resArray = new int[result.size()];
+        for (int i = 0; i < resArray.length; i++) {
+            resArray[i] = result.get(i);
+        }
+        return resArray;
+    }
+
+
+    public static int[] processQueries(int c, int[][] connections, int[][] queries) {
+        Map<Integer, List<Integer>> graph = new HashMap<>();
+        Map<Integer, Boolean> offlineOrOnline = new HashMap<>();
+        for (int i = 1; i <= c; i++) {
+            graph.put(i, new ArrayList<>());
+            offlineOrOnline.put(i, true);
+        }
+        for (int[] it : connections) {
+            int u = it[0];
+            int v = it[1];
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
+
+
+        int cur = 0;
+        boolean[] seen = new boolean[c + 1];
+        Map<Integer, Integer> powerGrid = new HashMap<>();
+        Map<Integer, TreeSet<Integer>> powerSetup = new HashMap<>();
+        for (int i = 1; i <= c; i++) {
+            if (seen[i] == false) {
+                dfs(graph, i, seen, cur, powerGrid, powerSetup);
+                cur++;
+            }
+        }
+
+
+        List<Integer> result = new ArrayList<>();
+        for (int[] it : queries) {
+            int type = it[0];
+            int node = it[1];
+            if (type == 2) offlineOrOnline.put(node, false);
+            else {
+                if (offlineOrOnline.get(node)) {
+                    result.add(node);
+                } else {
+                    int curNum = powerGrid.get(node);
+                    boolean flag = false;
+                    for (int cu : powerSetup.get(curNum)) {
+                        if (offlineOrOnline.get(cu)) {
+                            flag = true;
+                            result.add(cu);
+                            break;
+                        }
+                    }
+                    if (flag == false) {
+                        result.add(-1);
+                    }
+                }
+            }
+        }
+        int[] resArray = new int[result.size()];
+        for (int i = 0; i < resArray.length; i++) {
+            resArray[i] = result.get(i);
+        }
+        return resArray;
+    }
+
+    private static void dfs(Map<Integer, List<Integer>> grp, int node, boolean[] seen, int cur,
+                            Map<Integer, Integer> powerGrid, Map<Integer, TreeSet<Integer>> powerSetup) {
+        seen[node] = true;
+        powerGrid.put(node, cur);
+        powerSetup.putIfAbsent(cur, new TreeSet<>());
+        powerSetup.get(cur).add(node);
+
+        for (int it : grp.get(node)) {
+            if (seen[it] == false) {
+                dfs(grp, it, seen, cur, powerGrid, powerSetup);
+            }
+        }
+    }
+
+
+    private static void list(TreeNode root, int target, List<Integer> list, List<List<Integer>> fin) {
+        if (root == null) return;
+        if (root.left == null && root.right == null) {
+            list.add(root.val);
+            fin.add(new ArrayList<>(list));
+            return;
+        }
+
+        list.add(root.val);
+
+        list(root.left, target, list, fin);
+        list.remove(list.size() - 1);
+
+        list(root.right, target, list, fin);
+        list.remove(list.size() - 1);
+    }
+
+    public boolean isSubtree(TreeNode root, TreeNode subRoot) {
+        List<TreeNode> nodes = new ArrayList<>();
+        subtree(root, subRoot, nodes);
+        for (TreeNode node : nodes) {
+            if (isSameTree(node, subRoot)) return true;
+        }
+        return false;
+    }
+
+    //    public boolean isSameTree(TreeNode p, TreeNode q) {
+//        if (p == null || q == null) return p == q;
+//
+//        boolean left = isSameTree(p.left, q.left);
+//        if (left == false) return false;
+//        boolean right = isSameTree(p.right, q.right);
+//        if (right == false) return false;
+//
+//        return p.val == q.val && left && right;
+//    }
+//
+    private static void subTreeItr(TreeNode root, StringBuilder sb) {
+        if (root == null) return;
+        sb.append(root.val).append(",");
+        subTreeItr(root.left, sb);
+        subTreeItr(root.right, sb);
+    }
+
+    private static void subtree(TreeNode root, TreeNode subRoot, List<TreeNode> nodes) {
+        if (root == null) return;
+        if (root.val == subRoot.val) nodes.add(root);
+        subtree(root.left, subRoot, nodes);
+        subtree(root.right, subRoot, nodes);
+    }
+
+
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) return root;
+        invert(root);
+        return root;
+    }
+
+    private static void invert(TreeNode root) {
+        if (root == null) return;
+
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+        invert(root.left);
+        invert(root.right);
+    }
+
+    public static TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        Map<TreeNode, TreeNode> map = new HashMap<>();
+        dfs(root, map, null);
+        Set<TreeNode> set1 = iterator(p, map);
+        Set<TreeNode> set2 = iterator(q, map);
+        for (TreeNode it : set2) {
+            if (set1.contains(it)) {
+                return it;
+            }
+        }
+        return null;
+    }
+
+    private static Set<TreeNode> iterator(TreeNode root, Map<TreeNode, TreeNode> map) {
+        Queue<TreeNode> pq = new LinkedList<>();
+        pq.offer(root);
+        Set<TreeNode> result = new LinkedHashSet<>();
+        while (!pq.isEmpty()) {
+            TreeNode temp = pq.poll();
+            result.add(temp);
+            if (map.containsKey(temp) && map.get(temp) != null) {
+                pq.offer(map.get(temp));
+            }
+        }
+        return result;
+    }
+
+    private static void dfs(TreeNode root, Map<TreeNode, TreeNode> map, TreeNode parent) {
+        if (root == null) return;
+        map.put(root, parent);
+        dfs(root.left, map, root);
+        dfs(root.right, map, root);
+    }
+
+    static ArrayList<Integer> topView(Node root) {
+        // code here
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        solveGfd(root, 0, 0, map);
+        ArrayList<Integer> result = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            result.add(entry.getValue());
+        }
+        return result;
+    }
+
+    private static void solveGfd(Node root, int xDir, int yDir, TreeMap<Integer, Integer> map) {
+        if (root == null) return;
+
+        map.putIfAbsent(xDir, root.data);
+        solveGfd(root.left, xDir - 1, yDir + 1, map);
+        solveGfd(root.right, xDir + 1, yDir + 1, map);
+    }
+
+
+    public static List<List<Integer>> verticalTraversal(TreeNode root) {
+        TreeMap<Integer, TreeMap<Integer, List<Integer>>> map = new TreeMap<>();
+        solvedfs(root, 0, 0, map);
+        System.out.println(map);
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> re = new ArrayList<>();
+        for (Map.Entry<Integer, TreeMap<Integer, List<Integer>>> entry : map.entrySet()) {
+            TreeMap<Integer, List<Integer>> val = entry.getValue();
+            List<Integer> temp = new ArrayList<>();
+            for (Map.Entry<Integer, List<Integer>> entry1 : val.entrySet()) {
+                List<Integer> te = entry1.getValue();
+                re.add(te.get(0));
+                Collections.sort(te);
+                temp.addAll(te);
+            }
+            result.add(temp);
+        }
+
+        System.out.println(re);
+        return result;
+    }
+
+    private static void solvedfs(TreeNode root, int xDir, int yDir, TreeMap<Integer, TreeMap<Integer, List<Integer>>> map) {
+        if (root == null) return;
+
+        map.putIfAbsent(xDir, new TreeMap<>());
+        map.get(xDir).putIfAbsent(yDir, new ArrayList<>());
+        map.get(xDir).get(yDir).add(root.val);
+        solvedfs(root.left, xDir - 1, yDir + 1, map);
+        solvedfs(root.right, xDir + 1, yDir + 1, map);
+    }
+
+    static class Node {
+        int data;
+        Node left;
+        Node right;
+
+        public Node(int data) {
+            this.data = data;
+        }
+    }
+
+    ArrayList<Integer> boundaryTraversal(Node node) {
+        // code here
+        Queue<Node> pq = new LinkedList<>();
+        pq.offer(node);
+        List<Integer> left = new ArrayList<>();
+        List<Integer> bottom = new ArrayList<>();
+        List<Integer> right = new ArrayList<>();
+        int count = 0;
+        while (!pq.isEmpty()) {
+            int size = pq.size();
+            for (int i = 0; i < size; i++) {
+                Node temp = pq.poll();
+                if (i == 0) left.add(temp.data);
+                if (size >= 1 && i == size - 1) right.add(temp.data);
+                if (temp.left == null && temp.right == null) bottom.add(temp.data);
+                if (temp.left != null) {
+                    pq.offer(temp.left);
+                }
+                if (temp.right != null) {
+                    pq.offer(temp.right);
+                }
+            }
+        }
+        ArrayList<Integer> result = new ArrayList<>();
+        result.addAll(left);
+        result.addAll(bottom);
+        result.addAll(right);
+        return result;
+    }
+
+    static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        public TreeNode(int val) {
+            this.val = val;
+        }
+
+        @Override
+        public String toString() {
+            return "TreeNode{" +
+                    "val=" + val +
+                    '}';
+        }
+    }
+
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if (p == null || q == null) return p == q;
+
+        boolean left = isSameTree(p.left, q.left);
+        if (left == false) return false;
+        boolean right = isSameTree(p.right, q.right);
+        if (right == false) return false;
+
+        return p.val == q.val && left && right;
+    }
+
+    public static int diameterOfBinaryTree(TreeNode root) {
+        diameter(root);
+        return max;
+    }
+
+    static int max = Integer.MIN_VALUE;
+
+    private static int diameter(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        int left = diameter(root.left);
+        int right = diameter(root.right);
+        //System.out.println(left+"<<>>"+right);
+        max = Math.max(max, left + right);
+
+        return 1 + Math.max(left, right);
+    }
+
+    public boolean isBalanced(TreeNode root) {
+        int num = isOutOfBalance(root);
+        if (num == -1) return false;
+        return true;
+    }
+
+    private static int isOutOfBalance(TreeNode root) {
+        if (root == null) return 0;
+        int left = isOutOfBalance(root.left);
+        if (left == -1) return -1;
+        int right = isOutOfBalance(root.right);
+        if (right == -1) return -1;
+        if (Math.abs(left - right) > 1) {
+            return -1;
+        }
+
+        return 1 + Math.max(left, right);
+    }
+
+    public int maxDepth(TreeNode root) {
+        Queue<TreeNode> pq = new LinkedList<>();
+        pq.offer(root);
+        int count = 0;
+        while (!pq.isEmpty()) {
+            int size = pq.size();
+            for (int i = 0; i < size; i++) {
+                count++;
+                TreeNode temp = pq.poll();
+                if (temp.left != null) {
+                    pq.offer(temp.left);
+                }
+                if (temp.right != null) {
+                    pq.offer(temp.right);
+                }
+            }
+        }
+        return count;
+    }
+
+    public static int removeDuplicates(int[] nums) {
+        int n = nums.length;
+        int count = 0;
+        for (int i = 1; i < n; i++) {
+            int index = i;
+            while (index < n) {
+                if (nums[index] > nums[i - 1]) {
+                    break;
+                }
+                index++;
+            }
+
+            if (index < n) {
+                nums[i] = nums[index];
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static void moveZeroes(int[] nums) {
+        int n = nums.length;
+        for (int i = 0; i < n; i++) {
+            if (nums[i] == 0) {
+                int one = i + 1;
+                while (one < n) {
+                    if (nums[one] != 1) {
+                        break;
+                    }
+                    one++;
+                }
+
+                if (one < n) {
+                    nums[i] = nums[one];
+                    nums[one] = 0;
+                }
+            }
+        }
+    }
+
+
+    public static int maxSubarraySumCircular(int[] nums) {
+        int n = nums.length;
+        int[] arr = new int[n * 2];
+        for (int i = 0; i < n * 2; i++) {
+            if (i < n) {
+                arr[i] = nums[i];
+            } else {
+                arr[i] = nums[i - n];
+            }
+        }
+
+        System.out.println(Arrays.toString(arr));
+        int m = arr.length;
+        int result = 0;
+        int curMax = 0;
+        for (int i = 0; i < m; i++) {
+            curMax = Math.max(arr[i], curMax + arr[i]);
+            result = Math.max(result, curMax);
+        }
+        return result;
+    }
+
+    public boolean checkSubarraySum(int[] nums, int k) {
+        int n = nums.length;
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += nums[i];
+            int rem = sum % k;
+            if (map.containsKey(rem)) {
+                return true;
+            }
+
+            map.put(rem, map.getOrDefault(rem, 0) + 1);
+        }
+        return false;
+    }
+
+
+    public int subarraysDivByK(int[] nums, int k) {
+        int n = nums.length;
+        Map<Integer, Integer> map = new HashMap<>();
+        int sum = 0;
+        int result = 0;
+        for (int i = 0; i < n; i++) {
+            sum += nums[i];
+            int rem = sum % k;
+            if (map.containsKey(rem)) {
+                result += map.get(sum % k);
+            }
+
+            map.put(rem, map.getOrDefault(rem, 0) + 1);
+        }
+        return result;
+    }
+
 
     public int longestSubarray(int[] arr, int k) {
         // code here
